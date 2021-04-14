@@ -1,0 +1,677 @@
+@charset "utf-8";
+/* CSS Document */
+h1, h2, h3, h4, h5 , h6, p
+{
+	padding:5px;
+	margin:5px;
+}
+@font-face
+{
+	font-family:maco_one;
+	src:url(../fonts/MarkoOne-Regular.ttf);
+}
+
+@font-face
+{
+	font-family:lato;
+	src:url(../fonts/Lato-Regular.ttf);
+}
+
+body
+{
+	font-family:lato;
+}
+
+
+.bg_banner
+{
+	height:70px;
+}
+
+/*.logo img
+{
+	float:left;
+	padding:6px 0;
+}*/
+
+.nav li a
+{
+	font-family:roboto;
+	color:#2f474e;
+	font-size:20px;
+	text-transform:capitalize;
+}
+
+.nav li a:hover
+{
+	color:#9ac14e;
+	background-color:#fff;
+}
+
+.nav
+{
+	background-color:#ffff;
+	border:none;
+	border-radius:0;
+}
+
+.social_network i
+{
+	width:27px;
+	height:27px;
+	border-radius:50px;
+	color:#fff;
+	text-align:center;
+	padding:6px 0;
+	box-sizing:border-box;
+	margin:10px 2px;
+}
+.social_network li
+{
+	float:left;
+
+}
+.social_network ul
+{
+	list-style:none;
+	float:right;
+	padding:0;
+}
+
+.mark_login
+{
+	list-style:none;
+	float:right;
+	margin-top:19px;
+}
+.btn_contact
+{
+	float:right;
+	margin-top:12px;
+	width:100%;
+}
+.btn_contact button
+{
+	background:none;
+	border:2px solid #78ABF1;
+	padding:5px 20px;
+	border-radius:20px;
+	color:#78ABF1;
+}
+
+.btn_contact button:hover
+{
+	background-color:#ff9138;
+	color:#fff;
+	border-color:#ff9138;
+}
+
+.navbar-default
+{
+	border:none;
+	background:none;
+}
+.navbar-default .navbar-nav li a
+{
+	padding-left:0;
+}
+
+.navbar-default .navbar-nav li a:hover
+{
+	color:#9ac14e;
+}
+
+.icon_instagram
+{
+	background-color:#64727F;
+}
+
+.icon_instagram:hover
+{
+	background-color:#3e4f60;
+}
+
+.icon_facebook
+{
+	background-color:#637EAE;
+}
+
+.icon_facebook:hover
+{
+	background-color:#3d5f9a;
+}
+
+.icon_twitter
+{
+	background-color:#3EBEF2;
+}
+
+.icon_twitter:hover
+{
+	background-color:#0faef0;
+}
+
+.icon_google
+{
+	background-color:#EB7976;
+}
+
+.icon_google:hover
+{
+	background-color:#e75854;
+}
+
+.lbl_contact_us
+{
+	width:140px;
+	height:38px;
+	border:2px solid #78ABF1;
+	color:#78ABF1;
+	background-color:#fff;
+	padding:6px 0;
+	border-radius:22px;
+	text-align:center;
+	margin:6px 0;
+	font-size:12px;
+	font-weight: 700;
+	line-height:24px;
+	box-sizing: inherit;
+	float:right;
+}
+
+.lbl_contact_us:hover
+{
+	background-color:#ff9138;
+	color:#fff;
+	border-color:#ff9138;
+}
+
+.img_slider
+{
+	background-color:#F2F2F2;
+}
+
+.carousel-indicators li
+{
+	width:30px;
+	height:30px;
+	border-radius:50%;
+	background-color:#363D41;
+	color:#fff;
+	text-indent:0;
+	font-size:18px;
+	padding:2px 0;
+	border:none;
+}
+
+.carousel-indicators .active
+{
+	width:30px;
+	height:30px;
+	border-radius:50%;
+	background-color:#FF9138;
+	color:#fff;
+	font-size:18px;
+	text-align:center;
+	padding:2px 0;
+	border:none;
+}
+
+.carousel-indicators li:hover
+{
+	width:30px;
+	height:30px;
+	border-radius:50%;
+	background-color:#FF9138;
+	color:#fff;
+	text-indent:0;
+	font-size:18px;
+	padding:2px 0;
+	transition:all 1s linear;
+	border:none;
+}
+
+.carousel_title
+{
+	position:absolute;
+	top:150px;
+	left:50px;
+}
+
+.carousel_title h1
+{
+	font-family:maco_one;
+	font-size:38px;
+	color:#151515;
+}
+
+.carousel_title p
+{
+	font-family:lato;
+	font-size:14px;
+	color:#9B9B9B;
+}
+.social_network
+{
+	text-align:center;
+	padding-top:7px;
+}
+
+.social_network ul li
+{
+	float:left;
+}
+
+.our_class_img
+{
+
+}
+
+.our_class_img img
+{
+	width:100%;
+	padding-top:10px;
+}
+
+.our_class_frame_left
+{
+	width:100%;
+	height:80px;
+	background-color:#363D41;
+	position:relative;
+	color:#fff;
+	font-family:maco_one;
+	font-size:20px;
+
+}
+
+.our_class_frame_right
+{
+	width:100%;
+	height:80px;
+	background-size:cover;
+	text-align:center;
+	line-height:80px;
+	color:#fff;
+	font-family:lato;
+	font-size:20px;
+}
+
+.our_class_frame_right_1
+{
+	background-image:url(../images/bg_btn_1.png);
+}
+
+.our_class_frame_right_2
+{
+	background-image:url(../images/our_classes/button2.png);
+}
+
+.our_class_frame_right_3
+{
+	background-image:url(../images/our_classes/button3.png);
+}
+
+.our_class_frame_right_4
+{
+	background-image:url(../images/our_classes/button4.png);
+}
+
+.fr_left_content
+{
+	padding:10px 10px;
+}
+
+.img_about_us
+{
+	padding-top:20px;
+	width:585px;
+	height:478px;
+}
+
+.contain_about
+{
+	float:right;
+	vertical-align:middle;
+}
+
+.title_about
+{
+	font-family:maco_one;
+	font-size:48px;
+	font-weight:bold;
+	padding-top:200px;
+	color:#151515;
+}
+
+.sub_title_about
+{
+	font-family:lato;
+	font-size:14px;
+	color:#151515;
+}
+
+.contain_about
+{
+	font-family:lato;
+	font-size:14px;
+	padding-top:20px;
+}
+
+.read_more
+{
+	font-family:lato;
+	font-size:12px;
+	color:#fff;
+	background-color:#FF9138;
+	border-radius:50px;
+	width:180px;
+	height:50px;
+	border:none;
+}
+
+.butt_about
+{
+	padding-top:100px;
+}
+
+.tieu_de_recent_news
+{
+	font-family:maco_one;
+	font-size:48px;
+	color:#151515;
+	text-align:center;
+	padding:30px 0;
+}
+
+.recent_news_frame_left p
+{
+	font-family:lato;
+	font-size:14px;
+	color:#9B9B9B;
+}
+
+.recent_news_frame_left h5
+{
+	font-family:maco_one;
+	font-size:24px;
+	color:#000;
+	padding-top:80px;
+}
+
+.recent_news_img
+{
+	width:570px;
+	height:326px;
+}
+
+.recent_news_frame_left .row
+{
+	padding-left:30px;
+}
+
+.but_frm_left
+{
+	width:100%;
+	height:5px;
+	background-color:#9AC14E;
+	margin-top:33px;
+}
+
+.frm_left
+{
+	height:514px;
+}
+
+.img_frm_right_1
+{
+	width:238px;
+	height:239px;
+}
+
+.contain_recent_news
+{
+	font-family:lato;
+	font-size:14px;
+	color:#9B9B9B;
+}
+
+.title_recent_news
+{
+	font-family:maco_one;
+	font-size:24px;
+	color:#151515;
+}
+
+.frm_right_1
+{
+	background-color:#78ABF1;
+	width:100%;
+	height:5px;
+	margin-top:10px;
+}
+
+.frm_right
+{
+	padding-left:50px;
+}
+
+.frm_right_2
+{
+	background-color:#FF9138;
+	width:100%;
+	height:5px;
+	margin-top:10px;
+}
+
+.right_2
+{
+	margin-top:10px;
+	height:245px;
+}
+
+.right_1
+{
+	height:245px;
+}
+
+.footer
+{
+	margin-top:40px;
+}
+
+.frm_contact
+{
+	background-color:#363d41;
+	min-height:500px;
+	margin-left:30px;
+	padding-left:20px;
+}
+
+.title_contact
+{
+	font-family:maco_one;
+	font-size:36px;
+	color:#fff;
+	padding-top:20px;
+}
+
+.input_text_contact
+{
+	width:498px;
+	height:47px;
+	background-color:#41494e;
+	border-radius:50px;
+	margin-top:20px;
+	padding-left:20px;
+	color:#fff;
+	border:none;
+}
+
+.text_message
+{
+	width:500px;
+	height:100px;
+	background-color:#41494e;
+	border-radius:50px;
+	margin-top:20px;
+	padding-left:20px;
+	color:#fff;
+	border:none;
+	padding-top:40px;
+}
+
+.btn_1
+{
+	width:216px;
+	height:51px;
+	background-color:#9AC14E;
+	border-radius:50px;
+	margin-top:20px;
+	color:#fff;
+	border:none;
+	float:right;
+	margin-right:40px;
+	font-size:12px;
+}
+
+/* menu show 2 lines:ipad pro */
+@media screen and (max-width:1100px)
+{
+	.h1, h1 {
+		font-size: 29px;
+	}
+	p {
+		font-size:14px;
+	}
+	.img_about_us
+	{
+		width:485px;
+	}
+	.recent_news_img
+	{
+		width:470px;
+	}
+	.recent_news_frame_left
+	{
+		padding-top:0;
+	}
+	.img_frm_right_1
+	{
+		width:180px;
+	}
+	.recent_news_frame_left h5
+	{
+		padding-top:35px;
+	}
+}
+
+/* menu show 2 lines: ipad */
+@media (max-width: 992px)
+{
+	.carousel_title h1
+	{
+		font-size:22px;
+		margin-top:-60px;
+	}
+	.carousel_title p
+	{
+		width:150px;
+	}
+	.img_about_us
+	{
+		width:350px;
+	}
+	.title_about
+	{
+		padding-top:100px;
+	}
+	.butt_about
+	{
+		padding-top:130px;
+	}
+	.img_frm_right_1
+	{
+		margin-top:80px;
+		width:238px;
+	}
+}
+
+@media screen and (max-width:767px)
+{
+	.carousel_title h1
+	{
+		font-size:12px;
+		margin-top:-110px;
+		margin-left:-50px;
+	}
+	.carousel_title p
+	{
+		width:80px;
+		margin-left:-50px;
+		font-size:8px;
+	}
+	.logo
+	{
+		text-align:center;
+	}
+	.social_network
+	{
+		list-style:none;
+	}
+	.social_network ul
+	{
+		float:none;
+		display:inline-block;
+	}
+	.btn_contact
+	{
+		text-align:center;
+	}
+	.navbar-toggle
+	{
+		float: none;
+		margin: auto;
+		border-width:0;
+		border-radius:0;
+	}
+	.navbar-header
+	{
+		text-align:center;
+		padding-top:5px;
+	}
+	.carousel-indicators
+	{
+		bottom:-5px;
+	}
+	.h1, h1 {
+		font-size: 19px;
+	}
+	p {
+		font-size:8px;
+		padding-left:15px;
+	}
+	.title_about
+	{
+		padding-top:10px;
+	}
+	.img_about_us
+	{
+		width:250px;
+	}
+	.butt_about
+	{
+		padding-top:150px;
+	}
+	.recent_news_img
+	{
+		width:270px;
+	}
+}
+
+.page-footer {
+	color: inherit !important;
+	opacity: 0.6 !important;
+	padding-top: 30px;
+	text-align: center;
+}

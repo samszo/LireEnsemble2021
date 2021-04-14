@@ -1,0 +1,75 @@
+<?php
+$escape = $this->plugin('escapeHtml');
+$siteTitle = $site->title();
+$this->htmlElement('html')->setAttribute('lang', $this->lang());
+$this->headMeta()->setCharset('utf-8');
+$this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1');
+$this->headTitle($siteTitle)->setSeparator(' · ');
+$this->headTitle()->append($this->setting('installation_title', 'Omeka S'));
+$this->headLink()->prependStylesheet($this->assetUrl('css/style.css'));
+$this->headLink()->prependStylesheet($this->assetUrl('css/iconfonts.css', 'Omeka'));
+
+$this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,700italic,700');
+
+$this->headLink()->prependStylesheet($this->assetUrl('css/bootstrap.min.css'));
+$this->headLink()->prependStylesheet($this->assetUrl('css/comment.css'));
+$this->headLink()->prependStylesheet($this->assetUrl('css/font-awesome.min.css'));
+
+$this->headScript()->prependFile($this->assetUrl('js/default.js'));
+$this->headScript()->prependFile($this->assetUrl('js/global.js', 'Omeka'));
+$this->headScript()->appendFile($this->assetUrl('js/bootstrap.min.js'));
+$this->headScript()->appendFile($this->assetUrl('js/jquery-3.4.1.min.js'));
+$this->jsTranslate();
+$this->trigger('view.layout');
+$userBar = $this->userBar();
+?>
+<?php echo $this->doctype(); ?>
+<?php echo $this->htmlElement('html'); ?>
+    <head>
+        <?php echo $this->headMeta(); ?>
+        <?php echo $this->headTitle(); ?>
+        <?php echo $this->headLink(); ?>
+        <?php echo $this->headStyle(); ?>
+        <?php echo $this->headScript(); ?>
+        
+        <style>
+            <?php if ($accentColor = $this->themeSetting('accent_color')): ?>
+            a:link,
+            a:visited {
+                color: <?php echo $accentColor; ?>
+            }
+            
+            a:active,
+            a:hover {
+                color: <?php echo $accentColor; ?>;
+                opacity: .75;
+            }
+            <?php endif; ?>
+        </style>
+        
+    </head>
+
+    <?php echo $this->htmlElement('body'); ?>
+       <!--- begin header----->
+       <?php echo $this->partial('omeka/site/header'); ?>
+       <!--- end header------->
+
+        <div class="clearfix"></div>
+        <div class="container">
+
+            <?php echo $this->content; ?>
+            
+           <!--- begin comment----->
+            <?php echo $this->partial('omeka/site/comment'); ?>
+           <!--- end comment------->
+
+        </div>
+        <footer class="container page-footer font-small blue pt-4 m-5">
+            <?php if ($footerContent = $this->themeSetting('footer')): ?>
+            <?php echo $footerContent; ?>
+            <?php else: ?>
+                <?php echo $this->translate('Powered by Omeka S'); ?>
+            <?php endif; ?>
+        </footer>
+    </body>
+</html>
