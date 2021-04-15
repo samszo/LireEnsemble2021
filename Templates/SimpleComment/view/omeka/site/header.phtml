@@ -1,47 +1,20 @@
 <?php
 $escape = $this->plugin('escapeHtml');
 $siteTitle = $site->title();
+$userBarComment = $this->userBarComment();
 ?>
+
 <div class="container">
     <div class="col-lg-3 col-md-7 col-sm-5 col-xs-12">
         <div class="logo">
             <?php if ($this->themeSetting('logo')): ?>
-            <img src="<?php echo $this->themeSettingAssetUrl('logo'); ?>" alt="<?php echo $escape($siteTitle); ?>" />
+                <img src="<?php echo $this->themeSettingAssetUrl('logo'); ?>" alt="<?php echo $escape($siteTitle); ?>" />
             <?php else: ?>
-            <?php echo $escape($siteTitle); ?>
+                <?php echo $escape($siteTitle); ?>
             <?php endif; ?>
         </div>
     </div>
-    <div class="col-lg-7 col-md-3 col-sm-4 col-xs-12">        	
-            <div class="mark_login">
-                Connexion par <a href="#">Nga Nguyen</a>
-            </div>                            
-    </div>  
-    <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
-        <div class="btn_contact">
-            <button>Déconnexion</button>
-        </div>
-    </div>
-</div>
+    <?php echo $userBarComment;?>
 
-<div class="clearfix"></div> 
-<div class="container">
-    <div class="navbar navbar-default">
-        <div class="navbar-header">
-            <button class="navbar-toggle" data-target="#menu" data-toggle="collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>                       
-        </div>
-        <div class="collapse navbar-collapse" id="menu">
-            <ul class="nav navbar-nav navbar-left">
-                <li><a href="#">Menu1</a></li>
-                <li><a href="#">Menu2</a></li>
-                <li><a href="#">Menu3</a></li>
-                <li><a href="#">Menu4</a></li>
-            </ul>
-        </div>           
-    </div>
-</div>
+
 

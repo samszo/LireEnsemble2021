@@ -1,0 +1,55 @@
+<?php
+$translate = $this->plugin('translate');
+$hyperlink = $this->plugin('hyperlink');
+$urlHelper = $this->plugin('url');
+$this->headLink()->prependStylesheet($this->assetUrl('css/user-bar.css', 'Omeka'));
+$this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Source+Code+Pro|Lato:400,400italic,700,700italic');
+?>
+
+    <?php if ($user): ?>
+    <div class="col-lg-7 col-md-3 col-sm-4 col-xs-12">
+        <div class="mark_login">
+            <?php
+            $url = $urlHelper('admin/id', ['controller' => 'user', 'id' => $user->getId()]);
+            echo sprintf($translate('Signed in as %s'), $hyperlink($user->getName(), $url));
+            ?>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
+        <div class="btn_contact">
+            <button>
+                <?php echo $hyperlink($translate('Logout'), $urlHelper('logout'), ['class' => 'logout']); ?>
+            </button>
+        </div>
+    </div>
+    <?php else: ?>
+        <?php echo $hyperlink($translate('Log in'), $urlHelper('login'), ['class' => 'login']); ?>
+    <?php endif; ?>
+</div>
+
+<?php if ($user): ?>
+<div class="clearfix"></div>
+<div class="container">
+    <div class="navbar navbar-default">
+        <div class="navbar-header">
+            <button class="navbar-toggle" data-target="#menu" data-toggle="collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse" id="menu">
+            <ul class="nav navbar-nav navbar-left">
+                <?php
+                    $strnext = " »";
+                    $i = 0;
+                    foreach ($links as $link):
+                        $i++;
+                ?>
+                    <li><?php echo $i == count($links) ? $hyperlink($link['text'], $link['url']) : $hyperlink($link['text'] . $strnext, $link['url']); ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
