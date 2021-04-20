@@ -1,0 +1,21 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Comment\Api\Representation\CommentRepresentation[] $comments
+ * @var int $parent_id
+ */
+
+$partial = $this->plugin('partial');
+?>
+
+<?php foreach ($comments as $comment) : ?>
+    <?php $parent = $comment->parent(); ?>
+    <?php if (($parent && $parent->id() == $parent_id) || (empty($parent) && empty($parent_id))): ?>
+    <div id="comment-<?= $comment->id() ?>" class="comment">
+        <?= $partial('common/admin/comment', ['comment' => $comment]) ?>
+        <div class="comment-children">
+            <?= $partial('common/admin/comments-thread', ['comments' => $comments, 'parent_id' => $comment->id()]) ?>
+        </div>
+    </div>
+    <?php endif; ?>
+<?php endforeach; ?>

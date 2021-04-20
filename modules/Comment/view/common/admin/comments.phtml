@@ -1,0 +1,37 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Comment\Api\Representation\CommentRepresentation[] $comments
+ * @var bool $commentThreaded
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$url = $plugins->get('url');
+$setting = $plugins->get('setting');
+$assetUrl = $plugins->get('assetUrl');
+$partial = $plugins->get('partial');
+
+$this->headLink()
+    ->appendStylesheet($assetUrl('css/comment-admin.css', 'Comment'))
+    ->appendStylesheet($assetUrl('css/comment.css', 'Comment'));
+$this->headScript()
+    ->appendFile($assetUrl('js/comment-admin.js', 'Comment'), 'text/javascript', ['defer' => 'defer'])
+    ->appendFile($assetUrl('js/comment.js', 'Comment'), 'text/javascript', ['defer' => 'defer']);
+
+// Required to manage the base path.
+$addUrl = $url('admin/comment', ['action' => 'add'], true);
+?>
+
+<div id="comments" class="comments" data-comment-url="<?= $addUrl ?>">
+    <?php if ($label = $setting('comment_comments_label')): ?>
+    <h2><?= $translate($label) ?></h2>
+    <?php endif; ?>
+    <?php if (empty($comments)): ?>
+    <p><?= $translate('No comment yet! Be the first to add one!'); ?></p>
+    <?php elseif ($commentThreaded ?? $setting('comment_threaded')): ?>
+        <?= $partial('common/admin/comments-thread', ['comments' => $comments, 'parent_id' => null]) ?>
+    <?php else: ?>
+        <?= $partial('common/admin/comments-list', ['comments' => $comments]) ?>
+    <?php endif; ?>
+</div>

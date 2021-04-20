@@ -1,0 +1,83 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Comment\Api\Representation\CommentRepresentation $resource
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$escape = $plugins->get('escapeHtml');
+$url = $plugins->get('url');
+$hyperlink = $plugins->get('hyperlink');
+$i18n = $plugins->get('i18n');
+?>
+
+<?php $comment = $resource; ?>
+<div class="resource-details" data-resource-values="<?php // echo $escape($values) ?>">
+    <h3 class="o-module-comment"><?= $comment->link(sprintf($translate('Comment #%d'), $comment->id())) ?></h3>
+    <div class="meta-group">
+        <?php $owner = $comment->owner(); ?>
+        <h4><?= $escape($translate('Commenter')) ?> <?php if (!$owner): ?><span class="comment-public"><?= $translate('(public)') ?></span><?php endif; ?></h4>
+        <div class="value">
+            <?php if ($owner): ?>
+            <span class="comment-email"><?= $hyperlink($owner->email(), $url('admin/id', ['controller' => 'user', 'action' => 'show', 'id' => $owner->id()])) ?></span>
+            <span class="comment-name"><?= $owner->name() ?></span>
+            <?php else: ?>
+            <span class="comment-email comment-public"><?= $hyperlink($comment->email(), 'mailto:' . $comment->email()) ?></span>
+            <span class="comment-name"><?= $comment->name() ?></span>
+            <?php endif; ?>
+            <?php if ($website = $comment->website()): ?>
+            <span class="comment-website"><?= $website ?></span>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="meta-group">
+        <?php $resource = $comment->resource(); ?>
+        <?php $resourceName = $resource ? $resource->getControllerName() : null; ?>
+        <h4><?= $escape($translate($resourceName ? ucfirst($resourceName) : 'No resource')) ?> <span class="fa resource-name <?= $resourceName ?: 'no-resource'; ?>" aria-label="<?= $resourceName ?: $translate('No resource') ?>"></span></h4>
+        <div class="value">
+        <?php if ($resource): ?>
+        <span class="resource-name">
+            <?= $resource->link($resource->displayTitle()) ?>
+        </span>
+            <?php if (!$resource->isPublic()): ?>
+        <span class="o-icon-private"></span>
+            <?php endif; ?>
+        <?php else: ?>
+        <span class="resource-name no-resource">
+            [<?= $translate('Removed') ?>]
+        </span>
+        <?php endif; ?>
+        </div>
+    </div>
+    <div class="meta-group">
+        <?php $site = $comment->site(); ?>
+        <h4><?= $escape($translate('Site')) ?></h4>
+        <div class="value">
+        <?php if ($site): ?>
+        <span class="site-name">
+            <?= $site->link($site->title()) ?>
+        </span>
+            <?php if (!$site->isPublic()): ?>
+        <span class="o-icon-private"></span>
+            <?php endif; ?>
+        <?php else: ?>
+        <span class="resource-name no-resource">
+            [<?= $translate('No site') ?>]
+        </span>
+        <?php endif; ?>
+        </div>
+    </div>
+    <div class="meta-group">
+        <h4><?= $translate('Date Created') ?></h4>
+        <div class="value"><?= $escape($i18n->dateFormat($comment->created())) ?></div>
+    </div>
+    <div class="meta-group">
+        <h4><?= $translate('Date Modified') ?></h4>
+        <div class="value"><?= $escape($i18n->dateFormat($comment->modified())) ?></div>
+    </div>
+    <div class="meta-group">
+        <h4><?= $translate('Body') ?></h4>
+        <div class="value"><?= $escape($comment->body()) ?></div>
+    </div>
+</div>
