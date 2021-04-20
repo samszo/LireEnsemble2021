@@ -1,10 +1,18 @@
 @charset "utf-8";
 /* CSS Document */
-h1, h2, h3, h4, h5 , h6, p
+h1, h2, h3, h4, h5 , h6
+{
+	padding:5px;
+	margin:5px;
+	font-weight: bold;
+}
+
+p
 {
 	padding:5px;
 	margin:5px;
 }
+
 @font-face
 {
 	font-family:maco_one;
@@ -50,7 +58,6 @@ body
 
 .nav
 {
-	background-color:#ffff;
 	border:none;
 	border-radius:0;
 }
@@ -84,13 +91,13 @@ body
 	float:right;
 	margin-top:19px;
 }
-.btn_contact
+.btn_loginout
 {
 	float:right;
 	margin-top:12px;
 	width:100%;
 }
-.btn_contact button
+.btn_loginout button
 {
 	background:none;
 	border:2px solid #78ABF1;
@@ -99,7 +106,7 @@ body
 	color:#78ABF1;
 }
 
-.btn_contact button:hover
+.btn_loginout button:hover
 {
 	background-color:#ff9138;
 	color:#fff;
@@ -624,7 +631,7 @@ body
 		float:none;
 		display:inline-block;
 	}
-	.btn_contact
+	.btn_loginout
 	{
 		text-align:center;
 	}

@@ -16,14 +16,25 @@ $this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Source+C
         </div>
     </div>
     <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
-        <div class="btn_contact">
+        <div class="btn_loginout">
             <button>
                 <?php echo $hyperlink($translate('Logout'), $urlHelper('logout'), ['class' => 'logout']); ?>
             </button>
         </div>
     </div>
     <?php else: ?>
-        <?php echo $hyperlink($translate('Log in'), $urlHelper('login'), ['class' => 'login']); ?>
+        <div class="col-lg-7 col-md-3 col-sm-4 col-xs-12">
+            <div class="mark_login">
+                &nbsp;
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
+            <div class="btn_loginout">
+                <button>
+                    <?php echo $hyperlink($translate('Log in'), $urlHelper('login'), ['class' => 'login']); ?>
+                </button>
+            </div>
+        </div>
     <?php endif; ?>
 </div>
 
