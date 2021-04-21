@@ -20,9 +20,8 @@ $addUrl = $url('site/comment', ['action' => 'add'], true);
 ?>
 
 <div id="comments" class="comments" data-comment-url="<?= $addUrl ?>">
-
     <?php if ($label = $setting('comment_comments_label')): ?>
-    <h1 class="comments-title"><?= $translate($label) ?></h1>
+        <h2><?= $translate($label) ?></h2>
     <?php endif; ?>
     <?php if (empty($comments)): ?>
         <p><?= $translate('No comment yet! Be the first to add one!') ?></p>
@@ -31,6 +30,4 @@ $addUrl = $url('site/comment', ['action' => 'add'], true);
     <?php else: ?>
         <?= $partial('common/comments-list', ['comments' => $comments]) ?>
     <?php endif; ?>
-
 </div>
-

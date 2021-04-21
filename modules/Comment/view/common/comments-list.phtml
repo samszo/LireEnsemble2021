@@ -7,9 +7,10 @@
 $partial = $this->plugin('partial');
 ?>
 
-<?php foreach ($comments as $comment): ?>
-
-    <?= $partial('common/comment-single', ['comment' => $comment]) ?>
-
-<?php endforeach; ?>
-
+<div class="comments-list">
+    <?php foreach ($comments as $comment): ?>
+        <div id="comment-<?= $comment->id() ?>" class="comment">
+            <?= $partial('common/comment-single', ['comment' => $comment]) ?>
+        </div>
+    <?php endforeach; ?>
+</div>
