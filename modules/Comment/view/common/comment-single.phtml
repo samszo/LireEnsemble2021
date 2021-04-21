@@ -1,0 +1,62 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Comment\Api\Representation\CommentRepresentation $comment
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$escape = $plugins->get('escapeHtml');
+$hyperlink = $plugins->get('hyperlink');
+$userIsAllowed = $plugins->get('userIsAllowed');
+$i18n = $plugins->get('i18n');
+$setting = $plugins->get('setting');
+
+if ($name = $comment->name()):
+    $website = $comment->website();
+    $authorText = $website ? $hyperlink($name, $website) : $name;
+else:
+    $authorText = $escape($translate('Anonymous'));
+endif;
+
+$gravatarUrl = '//www.gravatar.com/avatar/' . md5(strtolower(trim($comment->email())));
+?>
+
+<div class="be-comment">
+<div class="be-img-comment">
+    <img class="be-ava-comment" src="<?= $gravatarUrl ?>" /><!-- class="gravatar" -->
+</div>
+
+<div class="be-comment-content">
+
+<div class="comment-body<?php if ($flagged = $comment->isFlagged()): ?> comment-flagged<?php endif; ?><?php if ($comment->isSpam()): ?> comment-spam<?php endif; ?>">
+
+    <span class="be-comment-name">
+        <?= $authorText ?>
+    </span>
+    <span class="be-comment-time">
+        <i class="fa fa-clock-o"></i>
+        <?= $i18n->dateFormat($comment->created()) ?>
+    </span>
+    <p class="be-comment-text">
+        <?= $escape($comment->body()) ?>
+    </p>
+</div>
+</div>
+</div>
+
+<?php // Don't display the flag when the comments are moderated a priori. ?>
+<?php if (!$setting('comment_public_require_moderation') || !$setting('comment_user_require_moderation')): ?>
+
+<?php if ($userIsAllowed(\Comment\Controller\Site\CommentController::class, 'flag')): ?>
+<p class="comment-flag"<?php if ($flagged): ?> style="display:none;"<?php endif;?>><?= $escape($translate('Flag inappropriate')) ?></p>
+<?php endif; ?>
+<?php if ($userIsAllowed(\Comment\Controller\Site\CommentController::class, 'unflag')): ?>
+<p class="comment-unflag"<?php if (!$flagged): ?> style="display:none;"<?php endif;?>><?= $escape($translate('Unflag inappropriate')) ?></p>
+<?php endif; ?>
+
+<?php endif; ?>
+
+<?php if ($comment->userIsAllowed('create')): ?>
+<p class="comment-reply"><?= $escape($translate('Reply')) ?></p>
+<?php endif; ?>
