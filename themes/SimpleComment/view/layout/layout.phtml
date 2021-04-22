@@ -18,6 +18,8 @@ $this->headLink()->prependStylesheet($this->assetUrl('css/font-awesome.min.css')
 
 $this->headScript()->prependFile($this->assetUrl('js/default.js'));
 $this->headScript()->prependFile($this->assetUrl('js/global.js', 'Omeka'));
+$this->headScript()->appendFile($this->assetUrl('js/bootstrap.min.js'));
+$this->headScript()->appendFile($this->assetUrl('js/jquery-3.4.1.min.js'));
 $this->jsTranslate();
 $this->trigger('view.layout');
 $userBar = $this->userBar();
@@ -68,9 +70,5 @@ $userBar = $this->userBar();
                 <?php echo $this->translate('Powered by Omeka S'); ?>
             <?php endif; ?>
         </footer>
-        <?php
-            $this->headScript()->prependFile($this->assetUrl('js/bootstrap.min.js'));
-            $this->headScript()->prependFile($this->assetUrl('js/jquery-3.4.1.min.js'));
-        ?>
     </body>
 </html>
