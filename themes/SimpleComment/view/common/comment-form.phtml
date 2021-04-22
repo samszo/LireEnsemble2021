@@ -16,8 +16,9 @@ $isAnonymous = empty($user);
 
 $commentForm->prepare();
 ?>
-<div class="form-block">
 
+<div class="form-block">
+    <div id="comment-main-container" data-is-anonymous="<?= (int) $isAnonymous ?>">
     <?php // echo $this->form($commentForm) ?>
     <?php // TODO Add messages only if not set by layout. Anyway, they are available via json. ?>
     <?php if (false && $messages = $this->messages()): ?>
@@ -124,4 +125,4 @@ $commentForm->prepare();
     <?= $this->form()->closeTag() ?>
     </div>
 </div>
-
+</div>

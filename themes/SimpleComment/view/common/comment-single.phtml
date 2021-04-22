@@ -22,6 +22,12 @@ endif;
 $gravatarUrl = '//www.gravatar.com/avatar/' . md5(strtolower(trim($comment->email())));
 ?>
 
+<style type="text/css">
+    .comment .comment-flag, .comment .comment-unflag {
+        padding-left: 0px;
+    }
+</style>
+
 <div class="be-comment">
 <div class="be-img-comment">
     <img class="be-ava-comment" src="<?= $gravatarUrl ?>" /><!-- class="gravatar" -->
@@ -45,18 +51,27 @@ $gravatarUrl = '//www.gravatar.com/avatar/' . md5(strtolower(trim($comment->emai
 </div>
 </div>
 
+<div class="social_network">
+    <ul>
 <?php // Don't display the flag when the comments are moderated a priori. ?>
 <?php if (!$setting('comment_public_require_moderation') || !$setting('comment_user_require_moderation')): ?>
 
-<?php if ($userIsAllowed(\Comment\Controller\Site\CommentController::class, 'flag')): ?>
-<p class="comment-flag"<?php if ($flagged): ?> style="display:none;"<?php endif;?>><?= $escape($translate('Flag inappropriate')) ?></p>
-<?php endif; ?>
-<?php if ($userIsAllowed(\Comment\Controller\Site\CommentController::class, 'unflag')): ?>
-<p class="comment-unflag"<?php if (!$flagged): ?> style="display:none;"<?php endif;?>><?= $escape($translate('Unflag inappropriate')) ?></p>
+    <?php if ($userIsAllowed(\Comment\Controller\Site\CommentController::class, 'flag')): ?>
+        <li><i class="fa fa-flag comment-flag"<?php if ($flagged): ?> style="display:none;"<?php endif;?> title="<?= $escape($translate('Flag inappropriate')) ?>"></i></li>
+    <?php endif; ?>
+    <?php if ($userIsAllowed(\Comment\Controller\Site\CommentController::class, 'unflag')): ?>
+        <li><i class="fa fa-flag comment-unflag"<?php if (!$flagged): ?> style="display:none;"<?php endif;?> title="<?= $escape($translate('Unflag inappropriate')) ?>"></i></li>
+    <?php endif; ?>
+
 <?php endif; ?>
 
+<?php if ($count > 0): ?>
+        <li><i class="count-comment fa fa-comment" data-toggle="collapse" href="#replyOne<?= $escape($comment->id()) ?>" title="<?= $count ?> Commentaire(s)"></i></li>
 <?php endif; ?>
 
 <?php if ($comment->userIsAllowed('create')): ?>
-<p class="comment-reply"><?= $escape($translate('Reply')) ?></p>
+    <li><i class="comment-reply fa fa-reply" title="<?= $escape($translate('Reply')) ?>"></i></li>
 <?php endif; ?>
+
+    </ul>
+</div>
