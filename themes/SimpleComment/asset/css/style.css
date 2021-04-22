@@ -635,6 +635,11 @@ body
 	{
 		text-align:center;
 	}
+    .mark_login
+    {
+        float:none;
+        text-align:center;
+    }
 	.navbar-toggle
 	{
 		float: none;
