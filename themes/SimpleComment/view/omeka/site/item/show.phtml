@@ -5,8 +5,51 @@ $this->htmlElement('body')->appendAttribute('class', 'item resource show');
 $embedMedia = $this->siteSetting('item_media_embed', false);
 $itemMedia = $item->media();
 ?>
+
+<style type="text/css">
+    body.resource #content>h2:first-of-type+h3 {
+        font-size: 15px;
+        text-transform: uppercase;
+        margin: -30px 0 30px;
+    }
+    #search {
+        top: 15px;
+        background-color: #fff;
+        border: 1px solid #dedede;
+        position: relative;
+        left: 0%;
+        padding: 7.5px;
+    }
+    h3 {
+        font-size: 15px;
+        text-transform: uppercase;
+        margin: -30px 0 30px;
+        line-height: 45px;
+        display: block;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+    }
+    h4 {
+        margin-bottom: 0;
+        font-size: 15px;
+    }
+
+    .scroller {
+        height: 550px;
+        overflow-y: scroll;
+        scrollbar-color: rebeccapurple green;
+        scrollbar-width: thin;
+    }
+</style>
+
 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 frm_left">
-    <div class="recent_news_frame_left">
+    <div id="search">
+        <?php echo $this->partial('common/search-form'); ?>
+    </div>
+    <div class="recent_news_frame_left" style="padding-top: 15px;">
 <?php echo $this->pageTitle($item->displayTitle(), 2); ?>
 <h3><?php echo $translate('Item'); ?></h3>
 <?php $this->trigger('view.show.before'); ?>
@@ -57,21 +100,34 @@ $subjectValues = $item->displaySubjectValues($page, 25, $property);
         <?php echo $subjectValues; ?>
     </div>
 <?php endif; ?>
-
+    <?php echo $this->annotations($resource); ?>
+    <?php echo $this->universalViewer($resource); ?>
 </div>
 </div>
 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 frm_right">
     <div class="right_1">
         <!--- begin comment----->
         <div class="comment">
-            <div class="be-comment-block">
+            <div class="be-comment-block scroller">
                 <?php echo $this->showComments($resource); ?>
                 <?php echo $this->showCommentForm($resource); ?>
             </div>
         </div>
         <!--- end comment------->
     </div>
+    <div class="clearfix" style="padding-top: 300px;"></div>
+    <div class="right_2">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <!--- begin tags----->
+            <?php echo $this->showTags($resource); ?>
+            <?php echo $this->showTaggingForm($resource); ?>
+            <!--- end tags----->
+        </div>
+    </div>
 </div>
-<?php echo $this->showTags($resource); ?>
-<?php echo $this->showTaggingForm($resource); ?>
+<div class="clearfix" style="padding-top: 80px;"></div>
+<div class="container">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <!-- autre functions-->
+    </div>
 </div>

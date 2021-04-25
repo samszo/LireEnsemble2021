@@ -26,6 +26,17 @@ $gravatarUrl = '//www.gravatar.com/avatar/' . md5(strtolower(trim($comment->emai
     .comment .comment-flag, .comment .comment-unflag {
         padding-left: 0px;
     }
+    .comment .comment-spam, .comment .comment-flagged {
+        background-color: #EB7976;
+    }
+    .comment .comment-spam, .comment .comment-flagged .be-comment-time {
+        font-size: 11px;
+        color: #64727F;
+        padding-right: 2px;
+    }
+    .comment .comment-spam, .comment .comment-flagged .be-comment-name {
+        padding-left: 5px;
+    }
 </style>
 
 <div class="be-comment">

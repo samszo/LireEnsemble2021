@@ -1,0 +1,38 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var \Folksonomy\Api\Representation\TagRepresentation[] $tags
+ */
+?>
+<style type="text/css">
+    .show_tag {
+        background: #556270;
+        border-radius: 2px;
+        padding: 0px 5px;
+    }
+    .show_tag a {
+        color: #fff;
+    }
+    .property h4 {
+        margin-bottom: 10px;
+    }
+    .tags {
+        padding: 5px 5px 0px;
+    }
+</style>
+<?php
+if ($tags):
+    $translate = $this->plugin('translate');
+    $hyperlink = $this->plugin('hyperlink');
+
+    // In public view, only items (default) and item sets are available.
+    $resourceName = $resource->getControllerName() === 'item-set' ? 'item-set' : null;
+    ?>
+    <div class="property tags">
+        <h4><?= $translate('Tags') ?></h4>
+        <?php foreach ($tags as $tag): ?>
+            <span class="show_tag"><?= $hyperlink($tag->name(), $tag->urlResources($resourceName)) ?></span>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
