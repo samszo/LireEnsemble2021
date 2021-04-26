@@ -4,12 +4,10 @@
 }
 
 .be-comment-block {
-    margin-bottom: 10px !important;
-    border: 1px solid #edeff2;
     border-radius: 2px;
     padding: 10px 20px;
     border:1px solid #ffffff;
-    margin-top: 10px !important;
+    margin-top: 12px !important;
 }
 
 .comments-title {
