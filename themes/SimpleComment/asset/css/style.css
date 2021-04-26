@@ -38,12 +38,6 @@ body {
 	height:70px;
 }
 
-.logo img
-{
-	float:left;
-	padding:6px 0;
-}
-
 .nav li a
 {
 	font-family:roboto;
@@ -566,6 +560,14 @@ body {
 	.recent_news_frame_left h5
 	{
 		padding-top:35px;
+	}
+	.right_1 {
+		width: 100%;
+		padding-top: 250px;
+	}
+	.right_2 {
+		width: 100%;
+		padding-top: 300px;
 	}
 }
 
