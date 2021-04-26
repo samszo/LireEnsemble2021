@@ -17,6 +17,14 @@ $isAnonymous = empty($user);
 $commentForm->prepare();
 ?>
 
+<style type="text/css">
+    @media screen and (max-width:767px) {
+        input[type=checkbox], input[type=radio]  {
+            margin: 0px;
+        }
+    }
+</style>
+
 <div class="form-block">
     <div id="comment-main-container" data-is-anonymous="<?= (int) $isAnonymous ?>">
     <?php // echo $this->form($commentForm) ?>

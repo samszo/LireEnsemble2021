@@ -415,11 +415,6 @@ body {
 	margin-top:33px;
 }
 
-.frm_left
-{
-	height:514px;
-}
-
 .img_frm_right_1
 {
 	width:238px;
@@ -454,17 +449,6 @@ body {
 	width:100%;
 	height:5px;
 	margin-top:10px;
-}
-
-.right_2
-{
-	margin-top:10px;
-	height:245px;
-}
-
-.right_1
-{
-	height:245px;
 }
 
 .footer
@@ -558,11 +542,10 @@ body {
 	}
 	.right_1 {
 		width: 100%;
-		padding-top: 250px;
+		font-size: 13px;
 	}
 	.right_2 {
 		width: 100%;
-		padding-top: 300px;
 	}
 }
 
@@ -657,7 +640,7 @@ body {
 		font-size: 19px;
 	}
 	p {
-		font-size:8px;
+		font-size:13px;
 		padding-left:15px;
 	}
 	.title_about
