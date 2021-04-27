@@ -110,6 +110,11 @@ body {
 	border-color:#ff9138;
 }
 
+.frm_right
+{
+	margin-top: 20px;
+}
+
 .navbar-default
 {
 	border:none;
@@ -603,6 +608,10 @@ body {
 		list-style:none;
 	}
 	.btn_loginout button
+	{
+		float: none;
+	}
+	#search
 	{
 		float: none;
 	}

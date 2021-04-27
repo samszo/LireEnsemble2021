@@ -163,6 +163,7 @@
     user-select: none;
     background-image: none;
     border: 1px solid transparent;
+    float: right;
 }
 
 .count-comment:hover {

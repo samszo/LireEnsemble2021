@@ -6,6 +6,27 @@ $this->headLink()->prependStylesheet($this->assetUrl('css/user-bar.css', 'Omeka'
 $this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Source+Code+Pro|Lato:400,400italic,700,700italic');
 ?>
 
+<style type="text/css">
+    #search {
+        top: 15px;
+        background-color: #fff;
+        border: 1px solid #dedede;
+        padding: 7.5px;
+        width: 300px;
+    }
+    @media screen and (max-width:767px)
+    {
+        #search {
+            position:initial;
+            background-color: #fff;
+            border: 1px solid #dedede;
+            padding: 7.5px;
+            width: 300px;
+            margin:auto;
+        }
+    }
+</style>
+
     <?php if ($user): ?>
     <div class="col-lg-7 col-md-3 col-sm-4 col-xs-12">
         <div class="mark_login">
@@ -25,7 +46,6 @@ $this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Source+C
     <?php else: ?>
         <div class="col-lg-7 col-md-3 col-sm-4 col-xs-12">
             <div class="mark_login">
-                &nbsp;
             </div>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
@@ -36,6 +56,11 @@ $this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Source+C
             </div>
         </div>
     <?php endif; ?>
+    <div class="col-lg-7 col-md-3 col-sm-4 col-xs-12">
+        <div id="search">
+            <?php echo $this->partial('common/search-form'); ?>
+        </div>
+    </div>
 </div>
 
 <?php if ($user): ?>

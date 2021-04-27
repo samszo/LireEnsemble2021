@@ -37,17 +37,29 @@ $gravatarUrl = '//www.gravatar.com/avatar/' . md5(strtolower(trim($comment->emai
     .comment .comment-spam, .comment .comment-flagged .be-comment-name {
         padding-left: 5px;
     }
+    .count_comment_children
+    {
+        text-align: right;
+        font-size: 12px;
+    }
+    .count_comment_children:hover
+    {
+        color:#ff9138;
+        cursor:pointer;
+    }
 </style>
-
+<?php if ($count > 0): ?>
+<div class="count_comment_children" data-toggle="collapse" href="#replyOne<?= $escape($comment->id()) ?>">
+    <?= $count ?> Commentaire(s)
+</div>
+<?php endif; ?>
 <div class="be-comment">
 <div class="be-img-comment">
     <img class="be-ava-comment" src="<?= $gravatarUrl ?>" /><!-- class="gravatar" -->
 </div>
 
 <div class="be-comment-content">
-
 <div class="comment-body<?php if ($flagged = $comment->isFlagged()): ?> comment-flagged<?php endif; ?><?php if ($comment->isSpam()): ?> comment-spam<?php endif; ?>">
-
     <span class="be-comment-name">
         <?= $authorText ?>
     </span>
