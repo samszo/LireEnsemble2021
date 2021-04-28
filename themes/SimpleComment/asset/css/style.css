@@ -668,6 +668,10 @@ body {
 	{
 		width:270px;
 	}
+	.btn_loginout button
+	{
+		margin-bottom: 10px;
+	}
 }
 
 .page-footer {
