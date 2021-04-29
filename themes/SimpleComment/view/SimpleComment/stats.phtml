@@ -1,0 +1,5 @@
+<?php
+$stats = $this->commentStats("10");
+foreach ($stats as $c) {
+    echo $c->body().'<br/>';
+}
