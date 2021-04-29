@@ -22,7 +22,7 @@ $this->headScript()->prependFile($this->assetUrl('js/bootstrap.min.js'));
 $this->headScript()->prependFile($this->assetUrl('js/jquery-3.4.1.min.js'));
 $this->jsTranslate();
 $this->trigger('view.layout');
-$userBar = $this->userBar();
+$userBarComment = $this->userBar();
 ?>
 <?php echo $this->doctype(); ?>
 <?php echo $this->htmlElement('html'); ?>
@@ -52,7 +52,7 @@ $userBar = $this->userBar();
 
     <?php echo $this->htmlElement('body'); ?>
        <!--- begin header----->
-       <?php echo $this->partial('omeka/site/header'); ?>
+        <?php echo $userBarComment;?>
        <!--- end header------->
 
         <div class="clearfix"></div>

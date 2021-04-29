@@ -3,8 +3,6 @@
 
 h1, h2, h3, h4, h5 , h6
 {
-	/* padding:5px;
-	margin:5px; */
 	font-weight: bold;
 }
 
@@ -48,7 +46,6 @@ body {
 
 .nav li a:hover
 {
-	color:#9ac14e;
 	background-color:#fff;
 }
 
@@ -123,11 +120,6 @@ body {
 .navbar-default .navbar-nav li a
 {
 	padding-left:0;
-}
-
-.navbar-default .navbar-nav li a:hover
-{
-	color:#9ac14e;
 }
 
 .icon_instagram

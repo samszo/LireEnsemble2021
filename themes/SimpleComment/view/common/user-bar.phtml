@@ -4,6 +4,16 @@ $hyperlink = $this->plugin('hyperlink');
 $urlHelper = $this->plugin('url');
 $this->headLink()->prependStylesheet($this->assetUrl('css/user-bar.css', 'Omeka'));
 $this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Source+Code+Pro|Lato:400,400italic,700,700italic');
+
+//-- menu admin
+$site = $this->vars('site');
+$escape = $this->plugin('escapeHtml');
+$siteTitle = $site->title();
+
+//-- menu front-end
+$nav = $site->publicNav();
+$container = $nav->getContainer();
+$activePage = $nav->findActive($container);
 ?>
 
 <style type="text/css">
@@ -25,8 +35,100 @@ $this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Source+C
             margin:auto;
         }
     }
+    #user-bar {
+        padding: 0px;
+    }
+    .navbar {
+        margin-bottom: 0px;
+    }
+    .nav-item:hover .nav-link:after, .nav-item:active .nav-link:after, .nav-item:focus .nav-link::after, .nav-item.active .nav-link::after, .nav-item.current-menu-item .nav-link::after {
+        width: 100%;
+    }
+    .nav-item .nav-link::after {
+        background-color: #f36c21;
+        height: 3px;
+        border-radius: 1.5px;
+    }
+    .nav-item .nav-link::after {
+        bottom: -2px;
+    }
+    .nav-item .nav-link::after {
+        content: "";
+        left: 0;
+        position: absolute;
+        right: 0;
+        transition: all 0.15s ease-in-out;
+        width: 0;
+    }
+    .nav-item:hover .nav-link::before, .nav-item:active .nav-link::before, .nav-item:focus .nav-link::before, .nav-item.active .nav-link::before, .nav-item.current-menu-item .nav-link::before {
+        opacity: 1;
+    }
+    .nav-item .nav-link {
+        display: inline-block;
+        position: relative;
+    }
+    .nav-item:hover .nav-link, .nav-item:active .nav-link, .nav-item:focus .nav-link, .nav-item.active .nav-link, .nav-item.current-menu-item .nav-link {
+        color: inherit;
+    }
+    nav-item .nav-link::before {
+        content: attr(title);
+        left: 0;
+        opacity: 0;
+        position: absolute;
+        right: 0;
+        transition: all 0.15s ease-in-out;
+        z-index: 9999;
+    }
 </style>
 
+<!-- begin menu for admin --->
+<div id="user-bar">
+    <div class="container">
+    <?php if ($user): ?>
+        <div class="site-links">
+            <!-- begin menu admin --->
+            <div class="navbar navbar-default">
+                <div class="navbar-header">
+                    <button class="navbar-toggle" data-target="#menu" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="menu">
+                    <ul class="nav navbar-nav navbar-left">
+                        <?php
+                        $strnext = " »";
+                        $i = 0;
+                        foreach ($links as $link):
+                            $i++;
+                            ?>
+                            <li><?php echo $i == count($links) ? $hyperlink($link['text'], $link['url']) : $hyperlink($link['text'] . $strnext, $link['url']); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            </div>
+            <!-- end menu admin ----->
+        </div>
+    <?php endif; ?>
+</div>
+</div>
+<!-- end menu for admin ----->
+
+<div class="container" style="padding-top: 5px;">
+    <div class="col-lg-3 col-md-7 col-sm-5 col-xs-12">
+        <div class="logo">
+            <?php if ($this->themeSetting('logo')): ?>
+                <a href="<?php echo $site->url(); ?>">
+                    <img src="<?php echo $this->themeSettingAssetUrl('logo'); ?>" alt="<?php echo $escape($siteTitle); ?>" />
+                </a>
+            <?php else: ?>
+                <a href="<?php echo $site->url(); ?>" class="site-title">
+                    <h1><?php echo $escape($siteTitle); ?></h1>
+                </a>
+            <?php endif; ?>
+        </div>
+    </div>
     <?php if ($user): ?>
     <div class="col-lg-7 col-md-3 col-sm-4 col-xs-12">
         <div class="mark_login">
@@ -63,7 +165,6 @@ $this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Source+C
     </div>
 </div>
 
-<?php if ($user): ?>
 <div class="clearfix"></div>
 <div class="container">
     <div class="navbar navbar-default">
@@ -77,15 +178,15 @@ $this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Source+C
         <div class="collapse navbar-collapse" id="menu">
             <ul class="nav navbar-nav navbar-left">
                 <?php
-                    $strnext = " »";
-                    $i = 0;
-                    foreach ($links as $link):
-                        $i++;
+                foreach($container as $page):
                 ?>
-                    <li><?php echo $i == count($links) ? $hyperlink($link['text'], $link['url']) : $hyperlink($link['text'] . $strnext, $link['url']); ?></li>
+                <li class="nav-item <?php if($activePage && $page->label == $activePage['page']->label) echo 'current_page_item current-menu-item';?>" style="padding: 15px 20px 0px 0px;">
+                    <div class="nav-link">
+                        <?php echo $this->navigation()->menu()->htmlify($page) . PHP_EOL; ?>
+                    </div>
+                </li>
                 <?php endforeach; ?>
             </ul>
         </div>
     </div>
 </div>
-<?php endif; ?>
