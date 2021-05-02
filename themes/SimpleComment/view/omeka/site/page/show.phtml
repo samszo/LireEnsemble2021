@@ -24,13 +24,14 @@ if ($activePage):
 
 <?php $this->trigger('view.show.before'); ?>
 <div class="blocks">
-    <?php 
+    <?php
     if($page->slug()=='stats')
         echo $this->partial('SimpleComment/'.$page->slug(), ['site'=>$site]);
     else
-        echo $this->content; 
+        echo $this->content;
     ?>
 </div>
+<br/>
 <?php $this->trigger('view.show.after'); ?>
 <?php if ($showPagePagination): ?>
 <?php echo $this->sitePagePagination(); ?>

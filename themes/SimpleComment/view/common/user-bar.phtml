@@ -180,7 +180,7 @@ $activePage = $nav->findActive($container);
                 <?php
                 foreach($container as $page):
                 ?>
-                <li class="nav-item <?php if($activePage && $page->label == $activePage['page']->label) echo 'current_page_item current-menu-item';?>" style="padding: 15px 20px 0px 0px;">
+                <li class="nav-item <?php if($activePage && $page->label == $activePage['page']->label) echo 'current_page_item current-menu-item';?>" style="padding: 25px 20px 0px 0px;">
                     <div class="nav-link">
                         <?php echo $this->navigation()->menu()->htmlify($page) . PHP_EOL; ?>
                     </div>
