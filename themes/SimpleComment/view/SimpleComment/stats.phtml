@@ -4,14 +4,14 @@ $stats = $this->commentStats("all");
 
 <style type="text/css">
     .scroller {
-        height: 200px;
+        height: 100px;
         overflow-y: scroll;
         scrollbar-color: rebeccapurple green;
         scrollbar-width: thin;
     }
 </style>
 
-<div class="container-fluid" style="padding-top: 20px;">
+<div class="container-fluid" style="padding-top: 20px;padding-left: 0px; padding-right: 0px;">
     <div class="col col-md-12">
         <div class="row">
             <div class="col col-md-12">
@@ -20,7 +20,7 @@ $stats = $this->commentStats("all");
                 <div class="progress">
                     <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="<?= $stats['rate_qui_comment_plus'] ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $stats['rate_qui_comment_plus'] ?>%"><?= $stats['value_qui_comment_plus'] ?> commentaire(s)</div>
                 </div>
-                <div class="collapse" id="quiOne">
+                <div class="collapse scroller" id="quiOne">
                 Les items ont été commentés par <?= $stats['arr_href_qui'][$stats['nom_qui_comment_plus']] ?>: <br/>
                 <?php
                 foreach ($stats['arr_id_items_qui'][$stats['nom_qui_comment_plus']] as $item) {
@@ -35,7 +35,7 @@ $stats = $this->commentStats("all");
                 foreach ($stats['arr_id_items_item'] as $item) {
                     if ($item['id'] == $stats['nom_item_comment_plus']) {
                         if (strlen($item['title']) > 50) {
-                            $str_reply = substr($item['title'], 1, 45)."...";
+                            $str_reply = substr($item['title'], 1, 45)." ...";
                         } else {
                             $str_reply = $item['title'];
                         }
@@ -54,7 +54,7 @@ $stats = $this->commentStats("all");
                 foreach ($stats['arr_id_items_reply'] as $item) {
                     if (strcmp($item['comment'], $stats['nom_reply_comment_plus']) == 0) {
                         if (strlen($stats['nom_reply_comment_plus']) > 45) {
-                            $str_reply = substr($stats['nom_reply_comment_plus'], 1, 50)."...";
+                            $str_reply = substr($stats['nom_reply_comment_plus'], 1, 50)." ...";
                         } else {
                             $str_reply = $stats['nom_reply_comment_plus'];
                         }
@@ -70,8 +70,8 @@ $stats = $this->commentStats("all");
                 ?>
 
                 <div style="padding-top: 50px;">
-                    <div class="scroller">
-                    Quels items ont les commentaires:
+                    <div>
+                        <label>Quels items ont les commentaires:</label>
                     <br/>
                     <?php
                     foreach ($stats['arr_id_items_item'] as $id=>$item) {

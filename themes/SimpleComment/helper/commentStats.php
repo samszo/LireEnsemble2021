@@ -42,14 +42,13 @@ class commentStats extends AbstractHelper
                 $arr_id_items_item[$c->resource()->id()]['title'] = $it->title();
             }
             //---- prendre ahref de user
-            $page_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
             if ($c->owner() != null) {
                 if (strlen($c->name() > 20)) {
-                    $str_nom = substr($c->name(), 1, 20);
+                    $str_nom = substr($c->name(), 1, 20)." ...";
                 } else {
                     $str_nom = $c->name();
                 }
-                $arr_href_qui[$c->name()] = "<a href='".$page_url."/admin/user/".$c->owner()->id()."'>".$str_nom."</a>";
+                $arr_href_qui[$c->name()] = "<a href='/admin/user/".$c->owner()->id()."'>".$str_nom."</a>";
             } else if ($c->website() != null) {
                 $arr_href_qui[$c->name()] = "<a href='".$c->website()."'>".$str_nom."</a>";
             } else {
