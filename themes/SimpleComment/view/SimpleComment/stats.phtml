@@ -2,16 +2,26 @@
 $stats = $this->commentStats("all");
 ?>
 
+<style type="text/css">
+    .scroller {
+        height: 200px;
+        overflow-y: scroll;
+        scrollbar-color: rebeccapurple green;
+        scrollbar-width: thin;
+    }
+</style>
+
 <div class="container-fluid" style="padding-top: 20px;">
     <div class="col col-md-12">
         <div class="row">
             <div class="col col-md-12">
                 <h4>Commentaires Stats:</h4>
-                Qui commentent le plus: <?= $stats['nom_qui_comment_plus'] ?><span class="pull-right strong">100%</span>
+                Qui commente le plus: <?= $stats['arr_href_qui'][$stats['nom_qui_comment_plus']] ?> avec <a class="qui_comment_plus" data-toggle="collapse" href="#quiOne">items</a><span class="pull-right strong"><?= $stats['sum_qui_comment_plus'] ?> commentaire(s)</span>
                 <div class="progress">
-                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="<?= $stats['rate_qui_comment_plus'] ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $stats['rate_qui_comment_plus'] ?>%"><?= $stats['rate_qui_comment_plus'] ?>%</div>
+                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="<?= $stats['rate_qui_comment_plus'] ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $stats['rate_qui_comment_plus'] ?>%"><?= $stats['value_qui_comment_plus'] ?> commentaire(s)</div>
                 </div>
-                Les items ont été commentés par <?= $stats['nom_qui_comment_plus'] ?>: <br/>
+                <div class="collapse" id="quiOne">
+                Les items ont été commentés par <?= $stats['arr_href_qui'][$stats['nom_qui_comment_plus']] ?>: <br/>
                 <?php
                 foreach ($stats['arr_id_items_qui'][$stats['nom_qui_comment_plus']] as $item) {
                 ?>
@@ -19,38 +29,59 @@ $stats = $this->commentStats("all");
                 <?php
                 }
                 ?>
-                <br/>
-                Quels items sont le plus commentés: <?= $stats['nom_item_comment_plus'] ?><span class="pull-right strong">100%</span>
-                <div class="progress">
-                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?= $stats['rate_item_comment_plus'] ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $stats['rate_item_comment_plus'] ?>%"><?= $stats['rate_item_comment_plus'] ?>%</div>
                 </div>
-                Items sont le plus commentés:
                 <br/>
                 <?php
                 foreach ($stats['arr_id_items_item'] as $item) {
                     if ($item['id'] == $stats['nom_item_comment_plus']) {
+                        if (strlen($item['title']) > 50) {
+                            $str_reply = substr($item['title'], 1, 45)."...";
+                        } else {
+                            $str_reply = $item['title'];
+                        }
+                        $str_href = "<a href='".$item['path']."'>".$str_reply."</a>";
                     ?>
-                        <a href="<?= $item['path'] ?>"> <?= $item['title'] ?> </a><br/>
+                        Quel item est le plus commentés: <?= $str_href ?><span class="pull-right strong"><?= $stats['sum_item_comment_plus'] ?> commentaire(s)</span>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?= $stats['rate_item_comment_plus'] ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $stats['rate_item_comment_plus'] ?>%"><?= $stats['value_item_comment_plus'] ?> commentaire(s)</div>
+                        </div>
                     <?php
                     }
                 }
                 ?>
                 <br/>
-                Quels commentaires ont le plus de reply: <?= strlen($stats['nom_reply_comment_plus']) > 50 ? substr($stats['nom_reply_comment_plus'], 1, 50)."..." : $stats['nom_reply_comment_plus'] ?><span class="pull-right strong">100%</span>
-                <div class="progress">
-                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="<?= $stats['rate_reply_comment_plus'] ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $stats['rate_reply_comment_plus'] ?>%"><?= $stats['rate_reply_comment_plus'] ?>%</div>
-                </div>
-                Item qui contient ce commentaire est:
-                <br/>
                 <?php
                 foreach ($stats['arr_id_items_reply'] as $item) {
                     if (strcmp($item['comment'], $stats['nom_reply_comment_plus']) == 0) {
+                        if (strlen($stats['nom_reply_comment_plus']) > 45) {
+                            $str_reply = substr($stats['nom_reply_comment_plus'], 1, 50)."...";
+                        } else {
+                            $str_reply = $stats['nom_reply_comment_plus'];
+                        }
+                        $str_href = "<a href='".$item['path']."'>".$str_reply."</a>";
                 ?>
-                    <a href="<?= $item['path'] ?>"> <?= $item['title'] ?> </a><br/>
+                    Quel commentaire a le plus de réponse: <?= $str_href ?><span class="pull-right strong"><?= $stats['sum_reply_comment_plus'] ?> réponse(s)</span>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="<?= $stats['rate_reply_comment_plus'] ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $stats['rate_reply_comment_plus'] ?>%"><?= $stats['value_reply_comment_plus'] ?> réponse(s)</div>
+                    </div>
                 <?php
                     }
                 }
                 ?>
+
+                <div style="padding-top: 50px;">
+                    <div class="scroller">
+                    Quels items ont les commentaires:
+                    <br/>
+                    <?php
+                    foreach ($stats['arr_id_items_item'] as $id=>$item) {
+                        ?>
+                        <a href='<?= $item['path'] ?>'> <?= $item['title'] ?></a> (<?= $stats['counts_item_comment_plus'][$id] ?> commentaire(s))<br/>
+                        <?php
+                    }
+                    ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

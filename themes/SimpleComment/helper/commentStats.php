@@ -21,6 +21,7 @@ class commentStats extends AbstractHelper
         //-- qui comment plus
         $arr_qui_comment_plus = array();
         $arr_id_items_qui = array();
+        $arr_href_qui = array();
 
         //-- items sont plus comment
         $arr_item_comment_plus = array();
@@ -39,6 +40,20 @@ class commentStats extends AbstractHelper
             foreach ($item as $it) {
                 $arr_id_items_qui[$c->name()][$c->resource()->id()]['title'] = $it->title();
                 $arr_id_items_item[$c->resource()->id()]['title'] = $it->title();
+            }
+            //---- prendre ahref de user
+            $page_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            if ($c->owner() != null) {
+                if (strlen($c->name() > 20)) {
+                    $str_nom = substr($c->name(), 1, 20);
+                } else {
+                    $str_nom = $c->name();
+                }
+                $arr_href_qui[$c->name()] = "<a href='".$page_url."/admin/user/".$c->owner()->id()."'>".$str_nom."</a>";
+            } else if ($c->website() != null) {
+                $arr_href_qui[$c->name()] = "<a href='".$c->website()."'>".$str_nom."</a>";
+            } else {
+                $arr_href_qui[$c->name()] = $str_nom;
             }
 
             //-- items sont plus comment
@@ -64,10 +79,10 @@ class commentStats extends AbstractHelper
             $str = "_".$value."_comment_plus";
             ${"counts" . $str} = array_count_values(${"arr" . $str});
             arsort(${"counts" . $str});
-            $sum_all_comments = array_sum(${"counts" . $str});
+            ${"sum" . $str} = array_sum(${"counts" . $str});
             ${"value" . $str} = max(${"counts" . $str});
             ${"nom" . $str} = array_search(${"value" . $str}, ${"counts" . $str});
-            ${"rate" . $str} = round((${"value" . $str} * 100) / $sum_all_comments, 1);
+            ${"rate" . $str} = round((${"value" . $str} * 100) / ${"sum" . $str}, 1);
         }
 
         $arr_stats_return = [
@@ -77,9 +92,17 @@ class commentStats extends AbstractHelper
             'rate_item_comment_plus' => $rate_item_comment_plus,
             'nom_reply_comment_plus' => $nom_reply_comment_plus,
             'rate_reply_comment_plus' => $rate_reply_comment_plus,
+            'sum_qui_comment_plus' => $sum_qui_comment_plus,
+            'sum_item_comment_plus' => $sum_item_comment_plus,
+            'sum_reply_comment_plus' => $sum_reply_comment_plus,
+            'value_qui_comment_plus' => $value_qui_comment_plus,
+            'value_item_comment_plus' => $value_item_comment_plus,
+            'value_reply_comment_plus' => $value_reply_comment_plus,
             'arr_id_items_qui' => $arr_id_items_qui,
             'arr_id_items_item' => $arr_id_items_item,
-            'arr_id_items_reply' => $arr_id_items_reply
+            'arr_id_items_reply' => $arr_id_items_reply,
+            'arr_href_qui' => $arr_href_qui,
+            'counts_item_comment_plus' => $counts_item_comment_plus
         ];
 
         return $arr_stats_return;
