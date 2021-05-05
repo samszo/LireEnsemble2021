@@ -9,6 +9,13 @@ $stats = $this->commentStats("all");
         scrollbar-color: rebeccapurple green;
         scrollbar-width: thin;
     }
+
+    .scroller_items {
+        height: 300px;
+        overflow-y: scroll;
+        scrollbar-color: rebeccapurple green;
+        scrollbar-width: thin;
+    }
 </style>
 
 <div class="container-fluid" style="padding-top: 20px;padding-left: 0px; padding-right: 0px;">
@@ -70,8 +77,8 @@ $stats = $this->commentStats("all");
                 ?>
 
                 <div style="padding-top: 50px;">
-                    <div>
-                        <label>Quels items ont les commentaires:</label>
+                    <div class="scroller_items">
+                        <label>Les items commentées:</label>
                     <br/>
                     <?php
                     foreach ($stats['arr_id_items_item'] as $id=>$item) {

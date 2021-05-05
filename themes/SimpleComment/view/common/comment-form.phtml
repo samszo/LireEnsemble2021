@@ -23,6 +23,9 @@ $commentForm->prepare();
             margin: 0px;
         }
     }
+    .form-group {
+        margin-bottom: 5px;
+    }
 </style>
 
 <div class="form-block">
@@ -105,7 +108,7 @@ $commentForm->prepare();
     <?php endif; ?>
     <?php if ($commentForm->has('legal_agreement')): ?>
     <?php $element = $commentForm->get('legal_agreement'); ?>
-    <div class="col-xs-12" style="padding-top: 15px;">
+    <div class="col-xs-12" style="padding-top: 5px;">
         <div class="form-group inputs" required="required">
             <?= $this->formCheckbox($element)." ".rtrim(ltrim($this->setting('comment_legal_text'),"<p>"), "</p>") ?>
         </div>
@@ -121,7 +124,7 @@ $commentForm->prepare();
     <?= $formHidden($commentForm->get('csrf')) ?>
     <?php $element = $commentForm->get('submit'); ?>
 
-    <div class="col-xs-12" style="padding-top: 15px;">
+    <div class="col-xs-12">
         <div class="form-group inputs pull-right" required="required">
             <?= $this->formInput($element) ?>
         </div>

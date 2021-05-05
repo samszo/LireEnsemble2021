@@ -35,10 +35,11 @@ $itemMedia = $item->media();
     }
 
     .scroller {
-        height: 305px;
-        overflow-y: scroll;
-        scrollbar-color: rebeccapurple green;
+        overflow-y:auto;
+        height:auto;
+        max-height:602px;
         scrollbar-width: thin;
+        overflow-x: hidden;
     }
 
     .comment {
@@ -47,6 +48,10 @@ $itemMedia = $item->media();
 
     .uv .headerPanel .centerOptions .search .searchText {
         color: #565656;
+    }
+
+    .field .inputs>select, .field .inputs>textarea, .field .inputs>input[type="text"], .field .inputs>input[type="password"], .field .inputs>input[type="email"], .field .inputs>input[type="url"] {
+        font-size: 14px;
     }
 </style>
 <div class="container" style="padding-top: 20px;">

@@ -12,6 +12,7 @@ class commentStats extends AbstractHelper
      * @param string    $nb        Nombre de comment
      * @return array
      */
+
     public function __invoke($nb='all')
     {
         $view = $this->getView();
@@ -48,7 +49,9 @@ class commentStats extends AbstractHelper
                 } else {
                     $str_nom = $c->name();
                 }
-                $arr_href_qui[$c->name()] = "<a href='/admin/user/".$c->owner()->id()."'>".$str_nom."</a>";
+
+                $url = $view->url('admin/id', ['controller' => 'user', 'id' => $c->owner()->id()]);
+                $arr_href_qui[$c->name()] = "<a href='".$url."'>".$str_nom."</a>";
             } else if ($c->website() != null) {
                 $arr_href_qui[$c->name()] = "<a href='".$c->website()."'>".$str_nom."</a>";
             } else {
@@ -105,6 +108,5 @@ class commentStats extends AbstractHelper
         ];
 
         return $arr_stats_return;
-
     }
 }

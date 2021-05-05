@@ -5,7 +5,7 @@
 
 .be-comment-block {
     border-radius: 2px;
-    padding: 10px 20px;
+    padding: 5px 10px;
     border:1px solid #ffffff;
     margin-top: 12px !important;
 }
@@ -31,13 +31,12 @@
 }
 
 .be-comment-content {
-    margin-left: 80px;
+    margin-left: 70px;
 }
 
 .be-comment-content span {
     display: inline-block;
     width: 49%;
-    margin-bottom: 15px;
 }
 
 .be-comment-name {
@@ -47,12 +46,6 @@
 
 .be-comment-content a {
     color: #383b43;
-}
-
-.be-comment-content span {
-    display: inline-block;
-    width: 49%;
-    margin-bottom: 15px;
 }
 
 .be-comment-time {

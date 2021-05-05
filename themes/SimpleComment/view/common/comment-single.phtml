@@ -55,7 +55,7 @@ $gravatarUrl = '//www.gravatar.com/avatar/' . md5(strtolower(trim($comment->emai
 <?php endif; ?>
 <div class="be-comment">
 <div class="be-img-comment">
-    <img class="be-ava-comment" src="<?= $gravatarUrl ?>" /><!-- class="gravatar" -->
+    <img class="be-ava-comment" src="<?= $gravatarUrl ?>" />
 </div>
 
 <div class="be-comment-content">
@@ -76,8 +76,11 @@ $gravatarUrl = '//www.gravatar.com/avatar/' . md5(strtolower(trim($comment->emai
 
 <div class="social_network">
     <ul>
-<?php // Don't display the flag when the comments are moderated a priori. ?>
-<?php if (!$setting('comment_public_require_moderation') || !$setting('comment_user_require_moderation')): ?>
+<?php
+    $parent = $comment->parent();
+    // Don't display the flag when the comments are moderated a priori.
+?>
+<?php if ((!$setting('comment_public_require_moderation') || !$setting('comment_user_require_moderation')) && ($parent && $parent->id() == $comment->id()) || (empty($parent) && empty($parent_id))): ?>
 
     <?php if ($userIsAllowed(\Comment\Controller\Site\CommentController::class, 'flag')): ?>
         <li><i class="fa fa-flag comment-flag"<?php if ($flagged): ?> style="display:none;"<?php endif;?> title="<?= $escape($translate('Flag inappropriate')) ?>"></i></li>
@@ -92,7 +95,7 @@ $gravatarUrl = '//www.gravatar.com/avatar/' . md5(strtolower(trim($comment->emai
         <li><i class="count-comment fa fa-comment" data-toggle="collapse" href="#replyOne<?= $escape($comment->id()) ?>" title="<?= $count ?> Commentaire(s)"></i></li>
 <?php endif; ?>
 
-<?php if ($comment->userIsAllowed('create')): ?>
+<?php if ($comment->userIsAllowed('create') && ($parent && $parent->id() == $comment->id()) || (empty($parent) && empty($parent_id))): ?>
     <li><i class="comment-reply fa fa-reply" title="<?= $escape($translate('Reply')) ?>"></i></li>
 <?php endif; ?>
 
