@@ -43,13 +43,12 @@ class commentStats extends AbstractHelper
                 $arr_id_items_item[$c->resource()->id()]['title'] = $it->title();
             }
             //---- prendre ahref de user
+            if (strlen($c->name() > 10)) {
+                $str_nom = substr($c->name(), 0, 20)." ...";
+            } else {
+                $str_nom = $c->name();
+            }
             if ($c->owner() != null) {
-                if (strlen($c->name() > 20)) {
-                    $str_nom = substr($c->name(), 1, 20)." ...";
-                } else {
-                    $str_nom = $c->name();
-                }
-
                 $url = $view->url('admin/id', ['controller' => 'user', 'id' => $c->owner()->id()]);
                 $arr_href_qui[$c->name()] = "<a href='".$url."'>".$str_nom."</a>";
             } else if ($c->website() != null) {
@@ -82,28 +81,26 @@ class commentStats extends AbstractHelper
             ${"counts" . $str} = array_count_values(${"arr" . $str});
             arsort(${"counts" . $str});
             ${"sum" . $str} = array_sum(${"counts" . $str});
-            ${"value" . $str} = max(${"counts" . $str});
-            ${"nom" . $str} = array_search(${"value" . $str}, ${"counts" . $str});
-            ${"rate" . $str} = round((${"value" . $str} * 100) / ${"sum" . $str}, 1);
         }
 
+//        print'<pre>';print_r($counts_item_comment_plus);print'</pre>';
+
+        $num_slice = 10;
+        $slice_counts_qui_comment_plus = array_slice($counts_qui_comment_plus, 0, (count($counts_qui_comment_plus) > $num_slice ? $num_slice : count($counts_qui_comment_plus)), true);
+        $slice_counts_item_comment_plus = array_slice($counts_item_comment_plus, 0, (count($counts_item_comment_plus) > $num_slice ? $num_slice : count($counts_item_comment_plus)), true);
+        $slice_counts_reply_comment_plus = array_slice($counts_reply_comment_plus, 0, (count($counts_reply_comment_plus) > $num_slice ? $num_slice : count($counts_reply_comment_plus)), true);
+
         $arr_stats_return = [
-            'nom_qui_comment_plus' => $nom_qui_comment_plus,
-            'rate_qui_comment_plus' => $rate_qui_comment_plus,
-            'nom_item_comment_plus' => $nom_item_comment_plus,
-            'rate_item_comment_plus' => $rate_item_comment_plus,
-            'nom_reply_comment_plus' => $nom_reply_comment_plus,
-            'rate_reply_comment_plus' => $rate_reply_comment_plus,
             'sum_qui_comment_plus' => $sum_qui_comment_plus,
             'sum_item_comment_plus' => $sum_item_comment_plus,
             'sum_reply_comment_plus' => $sum_reply_comment_plus,
-            'value_qui_comment_plus' => $value_qui_comment_plus,
-            'value_item_comment_plus' => $value_item_comment_plus,
-            'value_reply_comment_plus' => $value_reply_comment_plus,
             'arr_id_items_qui' => $arr_id_items_qui,
             'arr_id_items_item' => $arr_id_items_item,
             'arr_id_items_reply' => $arr_id_items_reply,
             'arr_href_qui' => $arr_href_qui,
+            'slice_counts_qui_comment_plus' => $slice_counts_qui_comment_plus,
+            'slice_counts_item_comment_plus' => $slice_counts_item_comment_plus,
+            'slice_counts_reply_comment_plus' => $slice_counts_reply_comment_plus,
             'counts_item_comment_plus' => $counts_item_comment_plus
         ];
 
