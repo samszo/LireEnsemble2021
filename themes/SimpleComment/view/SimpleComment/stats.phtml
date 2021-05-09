@@ -63,7 +63,7 @@ $stats = $this->commentStats("all");
                         } else {
                             $str_reply = $item['title'];
                         }
-                        $str_href = "<a href='".$item['path']."'>".$str_reply."</a>";
+                        $str_href = "<a href='".$item['path']."' title='".$item['title']."'>".$str_reply."</a>";
                     ?>
 
                         <?= $str_href ?><span class="pull-right strong"><?= $stats['sum_item_comment_plus'] ?></span>
@@ -79,7 +79,7 @@ $stats = $this->commentStats("all");
                 ?>
             </div>
             <div class="col col-md-4">
-                <h4>Les commentaires qui ont le plus de reply:</h4>
+                <h4>Les commentaires qui ont le plus de réponse:</h4>
                 <?php
                 foreach ($stats['slice_counts_reply_comment_plus'] as $com => $num_reply) {
                 $rate = round(($num_reply * 100) / $stats['sum_reply_comment_plus'], 1);
@@ -92,7 +92,7 @@ $stats = $this->commentStats("all");
                         } else {
                             $str_reply = $com;
                         }
-                        $str_href = "<a href='".$item['path']."'>".$str_reply."</a>";
+                        $str_href = "<a href='".$item['path']."' title='".$com."'>".$str_reply."</a>";
                 ?>
 
                     <?= $str_href ?><span class="pull-right strong"><?= $stats['sum_reply_comment_plus'] ?></span>

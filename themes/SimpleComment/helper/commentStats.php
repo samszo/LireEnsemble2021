@@ -50,9 +50,9 @@ class commentStats extends AbstractHelper
             }
             if ($c->owner() != null) {
                 $url = $view->url('admin/id', ['controller' => 'user', 'id' => $c->owner()->id()]);
-                $arr_href_qui[$c->name()] = "<a href='".$url."'>".$str_nom."</a>";
+                $arr_href_qui[$c->name()] = "<a href='".$url."' title='".$str_nom."'>".$str_nom."</a>";
             } else if ($c->website() != null) {
-                $arr_href_qui[$c->name()] = "<a href='".$c->website()."'>".$str_nom."</a>";
+                $arr_href_qui[$c->name()] = "<a href='".$c->website()."' title='".$str_nom."'>".$str_nom."</a>";
             } else {
                 $arr_href_qui[$c->name()] = $str_nom;
             }
@@ -82,8 +82,6 @@ class commentStats extends AbstractHelper
             arsort(${"counts" . $str});
             ${"sum" . $str} = array_sum(${"counts" . $str});
         }
-
-//        print'<pre>';print_r($counts_item_comment_plus);print'</pre>';
 
         $num_slice = 10;
         $slice_counts_qui_comment_plus = array_slice($counts_qui_comment_plus, 0, (count($counts_qui_comment_plus) > $num_slice ? $num_slice : count($counts_qui_comment_plus)), true);
