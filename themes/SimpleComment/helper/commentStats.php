@@ -33,42 +33,45 @@ class commentStats extends AbstractHelper
         $arr_id_items_reply = array();
 
         foreach ($stats as $c) {
-            //-- qui comment plus
-            $arr_qui_comment_plus[] = $c->name();
-            $arr_id_items_qui[$c->name()][$c->resource()->id()]['path'] = $c->path();
-            $item = $view->api()->search('items',['id' => $c->resource()->id()
-            ])->getContent();
-            foreach ($item as $it) {
-                $arr_id_items_qui[$c->name()][$c->resource()->id()]['title'] = $it->title();
-                $arr_id_items_item[$c->resource()->id()]['title'] = $it->title();
-            }
-            //---- prendre ahref de user
-            if (strlen($c->name() > 10)) {
-                $str_nom = substr($c->name(), 0, 20)." ...";
-            } else {
-                $str_nom = $c->name();
-            }
-            if ($c->owner() != null) {
-                $url = $view->url('admin/id', ['controller' => 'user', 'id' => $c->owner()->id()]);
-                $arr_href_qui[$c->name()] = "<a href='".$url."' title='".$str_nom."'>".$str_nom."</a>";
-            } else if ($c->website() != null) {
-                $arr_href_qui[$c->name()] = "<a href='".$c->website()."' title='".$str_nom."'>".$str_nom."</a>";
-            } else {
-                $arr_href_qui[$c->name()] = $str_nom;
-            }
+            $parent = $c->parent();
+            if (($parent && $parent->id() == $c->id()) || (empty($parent) && empty($parent_id))) {
+                //-- qui comment plus
+                $arr_qui_comment_plus[] = $c->name();
+                $arr_id_items_qui[$c->name()][$c->resource()->id()]['id'] = $c->resource()->id();
+                $item = $view->api()->search('items', ['id' => $c->resource()->id()
+                ])->getContent();
+                foreach ($item as $it) {
+                    $arr_id_items_qui[$c->name()][$c->resource()->id()]['title'] = $it->title();
+                    $arr_id_items_item[$c->resource()->id()]['title'] = $it->title();
+                }
+                //---- prendre ahref de user
+                if (strlen($c->name() > 10)) {
+                    $str_nom = substr($c->name(), 0, 20) . " ...";
+                } else {
+                    $str_nom = $c->name();
+                }
+                if ($c->owner() != null) {
+                    $url = $view->url('admin/id', ['controller' => 'user', 'id' => $c->owner()->id()]);
+                    $arr_href_qui[$c->name()] = "<a href='" . $url . "' title='" . $str_nom . "'>" . $str_nom . "</a>";
+                } else if ($c->website() != null) {
+                    $arr_href_qui[$c->name()] = "<a href='" . $c->website() . "' title='" . $str_nom . "'>" . $str_nom . "</a>";
+                } else {
+                    $arr_href_qui[$c->name()] = $str_nom;
+                }
 
-            //-- items sont plus comment
-            $arr_item_comment_plus[] = $c->resource()->id();
-            $arr_id_items_item[$c->resource()->id()]['path'] = $c->path();
-            $arr_id_items_item[$c->resource()->id()]['id'] = $c->resource()->id();
+                //-- items sont plus comment
+                $arr_item_comment_plus[] = $c->resource()->id();
+                $arr_id_items_item[$c->resource()->id()]['id'] = $c->resource()->id();
+            }
 
             //-- comment ont plus reply
             if (count($c->children()) > 0) {
                 foreach ($c->children() as $child) {
                     $arr_reply_comment_plus[] = $c->body();
                 }
-                $arr_id_items_reply[$c->resource()->id()]['path'] = $c->path();
                 $arr_id_items_reply[$c->resource()->id()]['comment'] = $c->body();
+                $item = $view->api()->search('items', ['id' => $c->resource()->id()
+                ])->getContent();
                 foreach ($item as $it) {
                     $arr_id_items_reply[$c->resource()->id()]['title'] = $it->title();
                 }

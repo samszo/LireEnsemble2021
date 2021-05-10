@@ -38,7 +38,7 @@ $stats = $this->commentStats("all");
                     <?php
                     foreach ($stats['arr_id_items_qui'][$nom] as $item) {
                     ?>
-                        <a href="<?= $item['path'] ?>"> <?= "- ".$item['title'] ?> </a><br/>
+                        <a href="<?= $site->url() ?>/item/<?= $item['id'] ?>"> <?= "- ".$item['title'] ?> </a><br/>
                     <?php
                     }
                     ?>
@@ -63,7 +63,7 @@ $stats = $this->commentStats("all");
                         } else {
                             $str_reply = $item['title'];
                         }
-                        $str_href = "<a href='".$item['path']."' title='".$item['title']."'>".$str_reply."</a>";
+                        $str_href = "<a href='".$site->url()."/item/".$item['id']."' title='".$item['title']."'>".$str_reply."</a>";
                     ?>
 
                         <?= $str_href ?><span class="pull-right strong"><?= $stats['sum_item_comment_plus'] ?></span>
@@ -85,14 +85,14 @@ $stats = $this->commentStats("all");
                 $rate = round(($num_reply * 100) / $stats['sum_reply_comment_plus'], 1);
                 ?>
                 <?php
-                foreach ($stats['arr_id_items_reply'] as $item) {
+                foreach ($stats['arr_id_items_reply'] as $id=>$item) {
                     if (strcmp($item['comment'], $com) == 0) {
                         if (strlen($com) > 20) {
                             $str_reply = substr($com, 0, 20)." ...";
                         } else {
                             $str_reply = $com;
                         }
-                        $str_href = "<a href='".$item['path']."' title='".$com."'>".$str_reply."</a>";
+                        $str_href = "<a href='".$site->url()."/item/".$id."' title='".$com."'>".$str_reply."</a>";
                 ?>
 
                     <?= $str_href ?><span class="pull-right strong"><?= $stats['sum_reply_comment_plus'] ?></span>
@@ -115,7 +115,7 @@ $stats = $this->commentStats("all");
                 <?php
                 foreach ($stats['arr_id_items_item'] as $id=>$item) {
                     ?>
-                    <a href='<?= $item['path'] ?>'> <?= "- ".$item['title'] ?></a> (<?= $stats['counts_item_comment_plus'][$id] > 1 ? $stats['counts_item_comment_plus'][$id]." commentaires" : $stats['counts_item_comment_plus'][$id]." commentaire" ?> )<br/>
+                    <a href='<?= $site->url() ?>/item/<?= $item['id'] ?>'> <?= "- ".$item['title'] ?></a> (<?= $stats['counts_item_comment_plus'][$id] > 1 ? $stats['counts_item_comment_plus'][$id]." commentaires" : $stats['counts_item_comment_plus'][$id]." commentaire" ?> )<br/>
                     <?php
                 }
                 ?>

@@ -55,6 +55,25 @@ $itemMedia = $item->media();
     }
 </style>
 <div class="container" style="padding-top: 20px;">
+    <div>
+        <?php
+        $plugins = $this->getHelperPluginManager();
+        $hasNext = $plugins->has('previousResource');
+        ?>
+        <?php if ($hasNext): ?>
+            <div class="previous-next-items">
+                <?php if ($previous = $this->previousResource($resource)): ?>
+                    <?= $previous->link($translate('Previous item'), null, ['class' => 'previous-item']) ?>
+                <?php endif; ?>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <?php if ($next = $this->nextResource($resource)): ?>
+                    <?= $next->link($translate('Next item'), null, ['class' => 'next-item']) ?>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+<div class="container" style="padding-top: 20px;">
     <?php echo $this->pageTitle($item->displayTitle(), 2); ?>
 </div>
 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 frm_left">
@@ -81,25 +100,5 @@ $itemMedia = $item->media();
             <?php echo $this->showTaggingForm($resource); ?>
             <!--- end tags----->
         </div>
-    </div>
-</div>
-
-<div class="container">
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <?php
-        $plugins = $this->getHelperPluginManager();
-        $hasNext = $plugins->has('previousResource');
-        ?>
-        <?php if ($hasNext): ?>
-            <div class="previous-next-items">
-                <?php if ($previous = $this->previousResource($resource)): ?>
-                    <?= $previous->link($translate('Previous item'), null, ['class' => 'previous-item']) ?>
-                <?php endif; ?>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <?php if ($next = $this->nextResource($resource)): ?>
-                    <?= $next->link($translate('Next item'), null, ['class' => 'next-item']) ?>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
     </div>
 </div>
