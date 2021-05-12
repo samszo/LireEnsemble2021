@@ -9,6 +9,7 @@ class commentStats extends AbstractHelper
      * Get stats for comments
      * http://omeka-s.local/api/comments?pretty_print=1
      * http://omeka-s.local/api/items?id=390&pretty_print=1
+     * http://omeka-s.local/api/items?pretty_print=1
      * @param string    $nb        Nombre de comment
      * @return array
      */
@@ -38,6 +39,7 @@ class commentStats extends AbstractHelper
                 //-- qui comment plus
                 $arr_qui_comment_plus[] = $c->name();
                 $arr_id_items_qui[$c->name()][$c->resource()->id()]['id'] = $c->resource()->id();
+                $arr_id_items_qui[$c->name()][$c->resource()->id()]['com'][] = $c->body();
                 $item = $view->api()->search('items', ['id' => $c->resource()->id()
                 ])->getContent();
                 foreach ($item as $it) {
@@ -45,18 +47,18 @@ class commentStats extends AbstractHelper
                     $arr_id_items_item[$c->resource()->id()]['title'] = $it->title();
                 }
                 //---- prendre ahref de user
-                if (strlen($c->name() > 10)) {
+                if (strlen($c->name()) > 20) {
                     $str_nom = substr($c->name(), 0, 20) . " ...";
                 } else {
                     $str_nom = $c->name();
                 }
                 if ($c->owner() != null) {
                     $url = $view->url('admin/id', ['controller' => 'user', 'id' => $c->owner()->id()]);
-                    $arr_href_qui[$c->name()] = "<a href='" . $url . "' title='" . $str_nom . "'>" . $str_nom . "</a>";
+                    $arr_href_qui[$c->name()] = "<a href='" . $url . "' title='" . $c->name() . "'>" . $str_nom . "</a>";
                 } else if ($c->website() != null) {
-                    $arr_href_qui[$c->name()] = "<a href='" . $c->website() . "' title='" . $str_nom . "'>" . $str_nom . "</a>";
+                    $arr_href_qui[$c->name()] = "<a href='" . $c->website() . "' title='" . $c->name() . "'>" . $str_nom . "</a>";
                 } else {
-                    $arr_href_qui[$c->name()] = $str_nom;
+                    $arr_href_qui[$c->name()] = "<a href='#'>" . $str_nom . "</a>";
                 }
 
                 //-- items sont plus comment
@@ -74,6 +76,7 @@ class commentStats extends AbstractHelper
                 ])->getContent();
                 foreach ($item as $it) {
                     $arr_id_items_reply[$c->resource()->id()]['title'] = $it->title();
+                    $arr_id_items_reply[$c->resource()->id()]['sum_reply'] = count($c->children());
                 }
             }
         }
@@ -85,6 +88,8 @@ class commentStats extends AbstractHelper
             arsort(${"counts" . $str});
             ${"sum" . $str} = array_sum(${"counts" . $str});
         }
+
+//        print'<pre>';print_r($counts_item_comment_plus);print'</pre>';
 
         $num_slice = 10;
         $slice_counts_qui_comment_plus = array_slice($counts_qui_comment_plus, 0, (count($counts_qui_comment_plus) > $num_slice ? $num_slice : count($counts_qui_comment_plus)), true);
@@ -102,7 +107,8 @@ class commentStats extends AbstractHelper
             'slice_counts_qui_comment_plus' => $slice_counts_qui_comment_plus,
             'slice_counts_item_comment_plus' => $slice_counts_item_comment_plus,
             'slice_counts_reply_comment_plus' => $slice_counts_reply_comment_plus,
-            'counts_item_comment_plus' => $counts_item_comment_plus
+            'counts_item_comment_plus' => $counts_item_comment_plus,
+            'sum_items' => count($view->api()->search('items')->getContent())
         ];
 
         return $arr_stats_return;

@@ -23,33 +23,67 @@ $stats = $this->commentStats("all");
 <div class="container-fluid" style="padding-top: 20px;padding-left: 0px; padding-right: 0px;">
     <div class="col col-md-12">
         <div class="row">
-            <div class="col col-md-4">
-                <h4>Les personnes qui commentent le plus:</h4>
+            <div class="col col-md-6">
+                <div class="row">
+                <h4 style="padding-left: 14px;">Les personnes qui commentent le plus:</h4>
                 <?php
                 $i = 0;
                 foreach ($stats['slice_counts_qui_comment_plus'] as $nom => $num_com) {
                     $rate = round(($num_com * 100) / $stats['sum_qui_comment_plus'], 1);
                 ?>
-                    <?= $stats['arr_href_qui'][$nom] ?> avec <a class="qui_comment_plus" data-toggle="collapse" href="#quiOne<?=$i?>">items</a><span class="pull-right strong"><?= $stats['sum_qui_comment_plus'] ?></span>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="<?= $rate ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $rate ?>%"><?= $num_com > 1 ? $num_com." commentaires" : $num_com." commentaire" ?></div>
+                    <div class="col col-md-12">
+                        <?= $stats['arr_href_qui'][$nom] ?>
                     </div>
-                    <div class="collapse scroller" id="quiOne<?=$i?>">
-                    <?php
-                    foreach ($stats['arr_id_items_qui'][$nom] as $item) {
-                    ?>
-                        <a href="<?= $site->url() ?>/item/<?= $item['id'] ?>"> <?= "- ".$item['title'] ?> </a><br/>
-                    <?php
-                    }
-                    ?>
-                        <br/>
+                    <!-- begin comments --->
+                    <div class="col col-md-6">
+                        <a class="qui_comment_plus" data-toggle="collapse" href="#quiComOne<?=$i?>" style="color: #000;">Les commentaires</a><span class="pull-right strong"><?= $stats['sum_qui_comment_plus'] ?></span>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="<?= $rate ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $rate ?>%">
+                                <?= $num_com > 1 ? $num_com." commentaires" : $num_com." commentaire" ?>
+                            </div>
+                        </div>
+                        <div class="collapse scroller" id="quiComOne<?=$i?>">
+                        <?php
+                        foreach ($stats['arr_id_items_qui'][$nom] as $idItem=>$arr_com) {
+                            foreach ($arr_com['com'] as $content_com) {
+                        ?>
+                            <a href="<?= $site->url() ?>/item/<?= $idItem ?>"><?= "- ".$content_com ?></a><br/>
+                        <?php
+                            }
+                        }
+                        ?>
+                            <br/>
+                        </div>
                     </div>
+                    <!-- end comments --->
+
+                    <!-- begin items --->
+                    <div class="col col-md-6">
+                        <a class="qui_comment_plus" data-toggle="collapse" href="#quiItemOne<?=$i?>" style="color: #000;">Les items</a><span class="pull-right strong"><?= $stats['sum_items'] ?></span>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="<?= $rate ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $rate ?>%">
+                                <?= count($stats['arr_id_items_qui'][$nom]) > 1 ? count($stats['arr_id_items_qui'][$nom])." items" : count($stats['arr_id_items_qui'][$nom])." item" ?>
+                            </div>
+                        </div>
+                        <div class="collapse scroller" id="quiItemOne<?=$i?>">
+                            <?php
+                            foreach ($stats['arr_id_items_qui'][$nom] as $item) {
+                                ?>
+                                <a href="<?= $site->url() ?>/item/<?= $item['id'] ?>"> <?= "- ".$item['title'] ?> </a><br/>
+                                <?php
+                            }
+                            ?>
+                            <br/>
+                        </div>
+                    </div>
+                    <!-- end items --->
                 <?php
                     $i++;
                 }
                 ?>
             </div>
-            <div class="col col-md-4">
+            </div>
+            <div class="col col-md-3" style="padding-top: 5px;">
                 <h4>Les items qui sont le plus commentés:</h4>
                 <?php
                 foreach ($stats['slice_counts_item_comment_plus'] as $item_id => $num_com) {
@@ -78,7 +112,7 @@ $stats = $this->commentStats("all");
                 }
                 ?>
             </div>
-            <div class="col col-md-4">
+            <div class="col col-md-3" style="padding-top: 5px;">
                 <h4>Les commentaires qui ont le plus de réponse:</h4>
                 <?php
                 foreach ($stats['slice_counts_reply_comment_plus'] as $com => $num_reply) {
@@ -115,7 +149,21 @@ $stats = $this->commentStats("all");
                 <?php
                 foreach ($stats['arr_id_items_item'] as $id=>$item) {
                     ?>
-                    <a href='<?= $site->url() ?>/item/<?= $item['id'] ?>'> <?= "- ".$item['title'] ?></a> (<?= $stats['counts_item_comment_plus'][$id] > 1 ? $stats['counts_item_comment_plus'][$id]." commentaires" : $stats['counts_item_comment_plus'][$id]." commentaire" ?> )<br/>
+                    <a href='<?= $site->url() ?>/item/<?= $item['id'] ?>'>
+                        <?= "- ".$item['title'] ?>
+                    </a>
+                    (<?= $stats['counts_item_comment_plus'][$id] > 1 ? $stats['counts_item_comment_plus'][$id]." commentaires" : $stats['counts_item_comment_plus'][$id]." commentaire" ?>
+                    <?php
+                        $str_sum_reply = "";
+                        if (isset($stats['arr_id_items_reply'][$id]['sum_reply'])) {
+                            if ( $stats['arr_id_items_reply'][$id]['sum_reply'] > 1 ) {
+                                $str_sum_reply = ", " . $stats['arr_id_items_reply'][$id]['sum_reply'] . " réponses";
+                            } else {
+                                $str_sum_reply = ", " . $stats['arr_id_items_reply'][$id]['sum_reply'] . " réponse";
+                            }
+                        }
+                    ?>
+                    <?= $str_sum_reply ?> )<br/>
                     <?php
                 }
                 ?>
