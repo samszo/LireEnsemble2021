@@ -64,7 +64,7 @@ body {
 	text-align:center;
 	padding:6px 0;
 	box-sizing:border-box;
-	margin:10px 2px;
+	margin:0px 2px;
 }
 .social_network li
 {
@@ -255,7 +255,6 @@ body {
 .social_network
 {
 	text-align:center;
-	padding-top:7px;
 }
 
 .social_network ul li

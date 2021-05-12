@@ -19,7 +19,7 @@ $partial = $this->plugin('partial');
             <div id="comment-<?= $comment->id() ?>" class="comment">
                 <?= $partial('common/comment-single', ['comment' => $comment, 'count' => count($comment->children())]) ?>
                 <div class="comment-children" style="padding-left: 70px;">
-                    <div class="collapse" id="replyOne<?= $comment->id() ?>">
+                    <div class="collapse in" id="replyOne<?= $comment->id() ?>">
                     <?= $partial('common/comments-thread', ['comments' => $comments, 'parent_id' => $comment->id()]) ?>
                     </div>
                 </div>
