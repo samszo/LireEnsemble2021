@@ -27,9 +27,11 @@ $stats = $this->commentStats("all");
                 <div class="row">
                 <h4 style="padding-left: 14px;">Les personnes qui commentent le plus:</h4>
                 <?php
+                if (count($stats['slice_counts_qui_comment_plus']) > 0) {
                 $i = 0;
                 foreach ($stats['slice_counts_qui_comment_plus'] as $nom => $num_com) {
                     $rate = round(($num_com * 100) / $stats['sum_qui_comment_plus'], 1);
+                    $rate_item = round((count($stats['arr_id_items_qui'][$nom]) * 100) / $stats['sum_items'], 1);
                 ?>
                     <div class="col col-md-12">
                         <?= $stats['arr_href_qui'][$nom] ?>
@@ -38,8 +40,9 @@ $stats = $this->commentStats("all");
                     <div class="col col-md-6">
                         <a class="qui_comment_plus" data-toggle="collapse" href="#quiComOne<?=$i?>" style="color: #000;">Les commentaires</a><span class="pull-right strong"><?= $stats['sum_qui_comment_plus'] ?></span>
                         <div class="progress">
-                            <div class="progress-bar" role="progressbar" aria-valuenow="<?= $rate ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $rate ?>%">
-                                <?= $num_com > 1 ? $num_com." commentaires" : $num_com." commentaire" ?>
+                            <?php $str_count_com = $num_com > 1 ? $num_com." commentaires" : $num_com." commentaire" ?>
+                            <div class="progress-bar" role="progressbar" aria-valuenow="<?= $rate ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $rate ?>%" title="<?= $str_count_com ?>">
+                                <?= $str_count_com ?>
                             </div>
                         </div>
                         <div class="collapse scroller" id="quiComOne<?=$i?>">
@@ -61,8 +64,9 @@ $stats = $this->commentStats("all");
                     <div class="col col-md-6">
                         <a class="qui_comment_plus" data-toggle="collapse" href="#quiItemOne<?=$i?>" style="color: #000;">Les items</a><span class="pull-right strong"><?= $stats['sum_items'] ?></span>
                         <div class="progress">
-                            <div class="progress-bar" role="progressbar" aria-valuenow="<?= $rate ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $rate ?>%">
-                                <?= count($stats['arr_id_items_qui'][$nom]) > 1 ? count($stats['arr_id_items_qui'][$nom])." items" : count($stats['arr_id_items_qui'][$nom])." item" ?>
+                            <?php $str_count_item = count($stats['arr_id_items_qui'][$nom]) > 1 ? count($stats['arr_id_items_qui'][$nom])." items" : count($stats['arr_id_items_qui'][$nom])." item" ?>
+                            <div class="progress-bar" role="progressbar" aria-valuenow="<?= $rate_item ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $rate_item ?>%" title="<?= $str_count_item ?>">
+                                <?= $str_count_item ?>
                             </div>
                         </div>
                         <div class="collapse scroller" id="quiItemOne<?=$i?>">
@@ -80,20 +84,24 @@ $stats = $this->commentStats("all");
                 <?php
                     $i++;
                 }
+                } else {
+                    echo "<div style=\"padding-left: 14px;\">Pas encore de commentaire</div>";
+                }
                 ?>
             </div>
             </div>
             <div class="col col-md-3" style="padding-top: 5px;">
                 <h4>Les items qui sont le plus commentés:</h4>
                 <?php
+                if (count($stats['slice_counts_item_comment_plus']) > 0) {
                 foreach ($stats['slice_counts_item_comment_plus'] as $item_id => $num_com) {
                 $rate = round(($num_com * 100) / $stats['sum_item_comment_plus'], 1);
                 ?>
                 <?php
                 foreach ($stats['arr_id_items_item'] as $item) {
                     if ($item['id'] == $item_id) {
-                        if (strlen($item['title']) > 20) {
-                            $str_reply = substr($item['title'], 0, 20)." ...";
+                        if (strlen($item['title']) > 18) {
+                            $str_reply = substr($item['title'], 0, 18)." ...";
                         } else {
                             $str_reply = $item['title'];
                         }
@@ -102,7 +110,10 @@ $stats = $this->commentStats("all");
 
                         <?= $str_href ?><span class="pull-right strong"><?= $stats['sum_item_comment_plus'] ?></span>
                         <div class="progress">
-                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?= $rate ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $rate ?>%"><?= $num_com > 1 ? $num_com." commentaires" : $num_com." commentaire" ?></div>
+                            <?php $str_count_item_com = $num_com > 1 ? $num_com." commentaires" : $num_com." commentaire" ?>
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?= $rate ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $rate ?>%" title="<?= $str_count_item_com ?>">
+                                <?= $str_count_item_com ?>
+                            </div>
                         </div>
                     <?php
                     }
@@ -110,19 +121,23 @@ $stats = $this->commentStats("all");
                 ?>
                 <?php
                 }
+                } else {
+                    echo "<div>Pas encore de commentaire</div>";
+                }
                 ?>
             </div>
             <div class="col col-md-3" style="padding-top: 5px;">
                 <h4>Les commentaires qui ont le plus de réponse:</h4>
                 <?php
+                if (count($stats['slice_counts_reply_comment_plus']) > 0) {
                 foreach ($stats['slice_counts_reply_comment_plus'] as $com => $num_reply) {
                 $rate = round(($num_reply * 100) / $stats['sum_reply_comment_plus'], 1);
                 ?>
                 <?php
                 foreach ($stats['arr_id_items_reply'] as $id=>$item) {
                     if (strcmp($item['comment'], $com) == 0) {
-                        if (strlen($com) > 20) {
-                            $str_reply = substr($com, 0, 20)." ...";
+                        if (strlen($com) > 18) {
+                            $str_reply = substr($com, 0, 18)." ...";
                         } else {
                             $str_reply = $com;
                         }
@@ -131,7 +146,10 @@ $stats = $this->commentStats("all");
 
                     <?= $str_href ?><span class="pull-right strong"><?= $stats['sum_reply_comment_plus'] ?></span>
                     <div class="progress">
-                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="<?= $rate ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $rate ?>%"><?= $num_reply > 1 ? $num_reply." réponses" : $num_reply." réponse" ?></div>
+                        <?php $str_count_reply_com = $num_reply > 1 ? $num_reply." réponses" : $num_reply." réponse" ?>
+                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="<?= $rate ?>"aria-valuemin="0" aria-valuemax="100" style="width:<?= $rate ?>%" title="<?= $str_count_reply_com ?>">
+                            <?= $str_count_reply_com ?>
+                        </div>
                     </div>
                 <?php
                     }
@@ -139,9 +157,15 @@ $stats = $this->commentStats("all");
                 ?>
                 <?php
                 }
+                } else {
+                    echo "<div>Pas encore de réponse</div>";
+                }
                 ?>
             </div>
         </div>
+        <?php
+        if (count($stats['arr_id_items_item']) > 0) {
+        ?>
         <div style="padding-top: 50px;">
             <div class="scroller_items">
                 <label>Les items commentées:</label>
@@ -152,7 +176,6 @@ $stats = $this->commentStats("all");
                     <a href='<?= $site->url() ?>/item/<?= $item['id'] ?>'>
                         <?= "- ".$item['title'] ?>
                     </a>
-                    (<?= $stats['counts_item_comment_plus'][$id] > 1 ? $stats['counts_item_comment_plus'][$id]." commentaires" : $stats['counts_item_comment_plus'][$id]." commentaire" ?>
                     <?php
                         $str_sum_reply = "";
                         if (isset($stats['arr_id_items_reply'][$id]['sum_reply'])) {
@@ -163,11 +186,14 @@ $stats = $this->commentStats("all");
                             }
                         }
                     ?>
-                    <?= $str_sum_reply ?> )<br/>
+                    (<?= $stats['counts_item_comment_plus'][$id] > 1 ? $stats['counts_item_comment_plus'][$id]." commentaires" : $stats['counts_item_comment_plus'][$id]." commentaire" ?><?= $str_sum_reply ?> )<br/>
                     <?php
                 }
                 ?>
             </div>
         </div>
+        <?php
+        }
+        ?>
     </div>
 </div>

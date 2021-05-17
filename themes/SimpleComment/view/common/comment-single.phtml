@@ -70,7 +70,7 @@ $gravatarUrl = '//www.gravatar.com/avatar/' . md5(strtolower(trim($comment->emai
 </style>
 <?php if ($count > 0): ?>
 <div class="count_comment_children" data-toggle="collapse" href="#replyOne<?= $escape($comment->id()) ?>">
-    <?= $count > 1 ? $count . " Commentaires" : $count . " Commentaire" ?>
+    <?= $count > 1 ? $count . " Réponses" : $count . " Réponse" ?>
 </div>
 <?php endif; ?>
 <?php
@@ -120,7 +120,7 @@ if (($parent && $parent->id() == $comment->id()) || (empty($parent) && empty($pa
 <?php endif; ?>
 
 <?php if ($count > 0): ?>
-        <li><i class="count-comment fa fa-comment" data-toggle="collapse" href="#replyOne<?= $escape($comment->id()) ?>" title="<?= $count > 1 ? $count . " Commentaires" : $count . " Commentaire" ?>"></i></li>
+        <li><i class="count-comment fa fa-comment" data-toggle="collapse" href="#replyOne<?= $escape($comment->id()) ?>" title="<?= $count > 1 ? $count . " Réponses" : $count . " Réponse" ?>"></i></li>
 <?php endif; ?>
 
 <?php if ($comment->userIsAllowed('create') && ($parent && $parent->id() == $comment->id()) || (empty($parent) && empty($parent_id))): ?>

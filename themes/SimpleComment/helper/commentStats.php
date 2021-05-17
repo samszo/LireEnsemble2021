@@ -89,8 +89,6 @@ class commentStats extends AbstractHelper
             ${"sum" . $str} = array_sum(${"counts" . $str});
         }
 
-//        print'<pre>';print_r($counts_item_comment_plus);print'</pre>';
-
         $num_slice = 10;
         $slice_counts_qui_comment_plus = array_slice($counts_qui_comment_plus, 0, (count($counts_qui_comment_plus) > $num_slice ? $num_slice : count($counts_qui_comment_plus)), true);
         $slice_counts_item_comment_plus = array_slice($counts_item_comment_plus, 0, (count($counts_item_comment_plus) > $num_slice ? $num_slice : count($counts_item_comment_plus)), true);
@@ -108,7 +106,8 @@ class commentStats extends AbstractHelper
             'slice_counts_item_comment_plus' => $slice_counts_item_comment_plus,
             'slice_counts_reply_comment_plus' => $slice_counts_reply_comment_plus,
             'counts_item_comment_plus' => $counts_item_comment_plus,
-            'sum_items' => count($view->api()->search('items')->getContent())
+            'sum_items' => count($view->api()->search('items', ['site_id' => $view->currentSite()->id()
+            ])->getContent())
         ];
 
         return $arr_stats_return;
