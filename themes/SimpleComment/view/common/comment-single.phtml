@@ -67,6 +67,13 @@ $gravatarUrl = '//www.gravatar.com/avatar/' . md5(strtolower(trim($comment->emai
         font-size: 11px;
         color: #b4b7c1;
     }
+    .scroller_content_com {
+        overflow-y:auto;
+        height:auto;
+        max-height:150px;
+        scrollbar-width: thin;
+        overflow-x: hidden;
+    }
 </style>
 <?php if ($count > 0): ?>
 <div class="count_comment_children" data-toggle="collapse" href="#replyOne<?= $escape($comment->id()) ?>">
@@ -96,7 +103,7 @@ if (($parent && $parent->id() == $comment->id()) || (empty($parent) && empty($pa
         <i class="fa fa-clock-o"></i>
         <?= $i18n->dateFormat($comment->created()) ?>
     </span>
-    <p class="be-comment-text">
+    <p class="be-comment-text scroller_content_com">
         <?= $escape($comment->body()) ?>
     </p>
 </div>

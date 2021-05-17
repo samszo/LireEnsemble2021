@@ -49,8 +49,13 @@ $stats = $this->commentStats("all");
                         <?php
                         foreach ($stats['arr_id_items_qui'][$nom] as $idItem=>$arr_com) {
                             foreach ($arr_com['com'] as $content_com) {
+                                if (strlen($content_com) > 120) {
+                                    $str_sub_com = substr($content_com, 0, 120)." ...";
+                                } else {
+                                    $str_sub_com = $content_com;
+                                }
                         ?>
-                            <a href="<?= $site->url() ?>/item/<?= $idItem ?>"><?= "- ".$content_com ?></a><br/>
+                            <a href="<?= $site->url() ?>/item/<?= $idItem ?>"><?= "- ".$str_sub_com ?></a><br/>
                         <?php
                             }
                         }
