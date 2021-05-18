@@ -131,7 +131,7 @@ if (($parent && $parent->id() == $comment->id()) || (empty($parent) && empty($pa
 <?php endif; ?>
 
 <?php if ($comment->userIsAllowed('create') && ($parent && $parent->id() == $comment->id()) || (empty($parent) && empty($parent_id))): ?>
-    <li><i class="comment-reply fa fa-reply" title="<?= $escape($translate('Reply')) ?>"></i></li>
+    <li><i class="comment-reply fa fa-reply" title="Réponse"></i></li>
 <?php endif; ?>
 
     </ul>
