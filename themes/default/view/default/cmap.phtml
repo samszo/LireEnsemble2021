@@ -1,58 +1,28 @@
 <?php
 $cmap = $this->cmap();
 ?>
+
 <script>
-    let activities = [
-        ['Work'],
-        ['Eat'],
-        ['Commute'],
-        ['Play Game'],
-        ['Sleep']
-    ];
-    let pro0= [
-        ['pro 01'],
-        ['pro 02'],
-        ['pro 03'],
-        ['pro 04'],
-        ['pro 05']
-    ];
-    let pro1= [
-        ['pro 11'],
-        ['pro 11'],
-        ['pro 11'],
-        ['pro 11'],
-        ['pro 11']
-    ];
-    let pro2= [
-        ['pro 21'],
-        ['pro 21'],
-        ['pro 21'],
-        ['pro 21'],
-        ['pro 21']
-    ];
-    let pro3= [
-        ['pro 31'],
-        ['pro 31'],
-        ['pro 31'],
-        ['pro 31'],
-        ['pro 31']
-    ];
-    let pro4= [
-        ['pro 41'],
-        ['pro 41'],
-        ['pro 41'],
-        ['pro 41'],
-        ['pro 1']
-    ];
+    let activities = new Array();
+    <?php foreach($cmap['arr_name_table'] as $key => $val){ ?>
+    activities.push("<?php echo $val; ?>");
+    <?php } ?>
+
+    <?php foreach($cmap['arr_pro_table'] as $key => $val){ ?>
+    let <?= $key ?> = new Array();
+        <?php foreach($val as $key_pro => $val_pro){ ?>
+            <?= $key ?>.push("<?php echo $val_pro; ?>");
+        <?php } ?>
+    <?php } ?>
 
     let tables = new Array(activities.length).fill(1).map((v1,i1)=>{
         return {
-            tableName:activities[i1][0],
+            tableName:activities[i1],
             id:'table'+i1,
-            cols:new Array(('pro'+i1).length).fill(1).map((v2,i2)=>{
+            cols:new Array(eval('pro'+i1).length).fill(1).map((v2,i2)=>{
                 return {
                     id:'table'+i1+'cols'+i2,
-                    itemName:'pro'+i1+[i2],
+                    itemName:eval('pro'+i1)[i2],
                 }
             }),
         }
@@ -94,10 +64,18 @@ $cmap = $this->cmap();
         dominant-baseline: middle;
         /*text-anchor: middle;*/
     }
+
+    .scroll_svg {
+        overflow-y:auto;
+        overflow-x:auto;
+        height:auto;
+        max-height:600px;
+        scrollbar-width: thin;
+    }
 </style>
 
 
-<div id="wrap">
+<div id="wrap" class="scroll_svg">
     <svg id="svg" xmlns="http://www.w3.org/2000/svg" style="border:1px dashed #000;background-color: #F8F8F9;"></svg>
 </div>
 
@@ -113,7 +91,7 @@ $cmap = $this->cmap();
     let colsHeight = 30;//Hauteur du champ
     let tableTitleHeight = 30;//Hauteur du champ
     let tableFootHeight = 30;//Hauteur du champ
-    let colsWidth = 200;
+    let colsWidth = 350;
     let offLine = 20;//Décalage du nœud de la connexion
 
     //Définition de style
@@ -582,4 +560,3 @@ $cmap = $this->cmap();
 
 </script>
 
-<input type="hidden" value="" id="tmp" name="tmp"/>

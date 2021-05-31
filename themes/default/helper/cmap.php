@@ -16,26 +16,35 @@ class cmap extends AbstractHelper
     public function __invoke()
     {
         $view = $this->getView();
-        $resource_templates = $view->api()->search('resource_templates')->getContent();
+        $resource_templates = $view->api()->search('resource_templates',['limit' => 'all'
+        ])->getContent();
 
-        $arr = array();
-        foreach ($resource_templates as $obj) {
-            $arr[] = $obj->label();
-            //print "<br> 123= ".$obj->resource_template_property();
+        $data = json_encode($resource_templates);
+        $json = json_decode($data, true);
 
-/*
-            if (count($obj->resource_template_property()) > 0) {
-                foreach ($obj->resource_template_property() as $property) {
-                    $pro = $view->api()->search('properties', ['id' => $property->property()->id()
+        $arr_return = array();
+        $arr_name_table = array();
+        $i = 0;
+        foreach ($json as $obj) {
+
+            $arr_name_table[$i] = $obj['o:label'];
+
+            if (count($obj['o:resource_template_property']) > 0) {
+                $arr_pro_table['pro'.$i] = array();
+                foreach ($obj['o:resource_template_property'] as $property) {
+                    $pro = $view->api()->search('properties', ['id' => $property['o:property']['o:id']
                     ])->getContent();
-                    $arr[$obj->label()][$property->property()->id())] = $pro->label();
+                    $arr_pro_table['pro'.$i][] = ucfirst($pro[0]->label());
                 }
             }
-*/
+            $i++;
         }
 
+        $arr_return = [
+            'arr_name_table' => $arr_name_table,
+            'arr_pro_table' => $arr_pro_table
+        ];
 
-        //return json_encode($resource_templates);
-        return ($arr);
+        return ($arr_return);
     }
 }
