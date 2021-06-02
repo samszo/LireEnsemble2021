@@ -3,57 +3,10 @@ $cmap = $this->cmap();
 ?>
 
 <script>
-    let activities = new Array();
-    <?php foreach($cmap['arr_name_table'] as $key => $val){ ?>
-    activities.push("<?php echo $val; ?>");
-    <?php } ?>
+    let tables =  <?php echo json_encode($cmap['tables']); ?>
 
-    <?php foreach($cmap['arr_pro_table'] as $key => $val){ ?>
-    let <?= $key ?> = new Array();
-        <?php foreach($val as $key_pro => $val_pro){ ?>
-            <?= $key ?>.push("<?php echo $val_pro; ?>");
-        <?php } ?>
-    <?php } ?>
-
-    let tables = new Array(activities.length).fill(1).map((v1,i1)=>{
-        return {
-            tableName:activities[i1],
-            id:'table'+i1,
-            cols:new Array(eval('pro'+i1).length).fill(1).map((v2,i2)=>{
-                return {
-                    id:'table'+i1+'cols'+i2,
-                    itemName:eval('pro'+i1)[i2],
-                }
-            }),
-        }
-    })
-
-    let links = [
-        {
-            source:'table'+0,
-            target:'table'+1,
-            relation:'line1',
-            sourceIndex:1,
-            targetIndex:1,
-            value:1,
-        },
-        {
-            source:'table'+0,
-            target:'table'+1,
-            relation:'line1',
-            sourceIndex:2,
-            targetIndex:2,
-            value:1,
-        },
-        {
-            source:'table'+1,
-            target:'table'+2,
-            relation:'line1',
-            sourceIndex:2,
-            targetIndex:2,
-            value:1,
-        },
-    ]
+    let links = <?php echo json_encode($cmap['links']); ?>
+   
 </script>
 <style>
     .table-foot-btn{
