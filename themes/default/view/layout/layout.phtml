@@ -13,6 +13,7 @@ $this->headScript()->prependFile($this->assetUrl('js/default.js'));
 $this->headScript()->prependFile($this->assetUrl('js/global.js', 'Omeka'));
 $this->headScript()->prependFile($this->assetUrl('vendor/jquery/jquery.min.js', 'Omeka'));
 $this->headScript()->prependFile($this->assetUrl('js/d3.v5.min.js'));
+$this->headScript()->prependFile($this->assetUrl('js/cmap.js'));
 $this->jsTranslate();
 $this->trigger('view.layout');
 $userBar = $this->userBar();
