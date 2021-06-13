@@ -17,7 +17,7 @@ class cmap extends AbstractHelper
      * @return array
      */
 
-    public function __invoke()
+    public function __invoke($type)
     {
         $this->api = $this->getView()->api();
         $this->proLinks = array();
@@ -25,27 +25,27 @@ class cmap extends AbstractHelper
         //récupère les position de tables
         // donnees statique
         $pos_tables = array();
-        $pos_tables[2] = [-64.16794744643653, -225.66279862581356];
-        $pos_tables[3] = [-853.7752918523779, -221.43871535547365];
-        $pos_tables[4] = [504.9955746323891, 112.90570095022161];
-        $pos_tables[5] = [-391.5806170609788, 387.24958414810476];
-        $pos_tables[6] = [-836.3334819011574, 670.4776303122255];
-        $pos_tables[7] = [500.65283330777197, -158.35447566593007];
-        $pos_tables[9] = [-136.22391078760984, 561.8809044553493];
-        $pos_tables[10] = [491.2299114038808, -376.7836216386181];
-        $pos_tables[11] = [-736.9150421537685, 308.2457719129614];
-        $pos_tables[12] = [-623.1250459442194, -601.0068076484094];
-        $pos_tables[13] = [-937.6315636530862, -931.1520523310833];
-        $pos_tables[14] = [-1140.6560395670926, -98.18721250575173];
-        $pos_tables[15] = [-1148.8199831869213, -630.7843866444268];
-        $pos_tables[16] = [-409.849366259168, -23.05756417260503];
-        $pos_tables[17] = [-1223.2192326115742, 388.24270557018133];
-        $pos_tables[18] = [-194.07061998655354, -194.19490386961058];
-        $pos_tables[19] = [512.265693670412, 475.1210393414757];
+        $pos_tables[2] = [-742.8473310025732, -440.32583144916237];
+        $pos_tables[3] = [-225.95295047790114, -261.6651130637969];
+        $pos_tables[5] = [-226.924073097036, 250.90025991447555];
+        $pos_tables[6] = [9.717141624595797, -86.74840754174306];
+        $pos_tables[9] = [10.943338065105536, -441.441942222486];
+        $pos_tables[11] = [10.517273774070873, 207.69672687153417];
+        $pos_tables[12] = [-480.71836904759607, -267.20274842740326];
+        $pos_tables[13] = [-480.8270277220481, -441.37898145724506];
+        $pos_tables[14] = [-479.97858262889633, -89.37682267024684];
+        $pos_tables[15] = [-480.1404756608856, 190.02576281364605];
+        $pos_tables[16] = [-229.81651328637383, 464.56802904937774];
+        $pos_tables[17] = [-224.7882680573309, -441.92302572062897];
+	    $pos_tables[4] = [];
+	    $pos_tables[7] = [];
+	    $pos_tables[10] = [];
+        $pos_tables[18] = [];
+        $pos_tables[19] = [];
 
-        $pos_tables[0] = [-64.16794744643653, -225.66279862581356];
-        $pos_tables[1] = [-64.16794744643653, -225.66279862581356];
-        $pos_tables[8] = [-64.16794744643653, -225.66279862581356];
+        $pos_tables[0] = [];
+        $pos_tables[1] = [];
+        $pos_tables[8] = [];
 
         //récuopère les resource template
         $resource_templates = $this->api->search('resource_templates',['limit' => 'all'
@@ -70,8 +70,8 @@ class cmap extends AbstractHelper
             $tables[] = [
                 'tableName'=>ucfirst($str_pro),
                 'id'=>$rt->id(),
-                //'x'=>$pos_tables[$key][0],
-                //'y'=>$pos_tables[$key][1],
+                'x'=>isset($pos_tables[$key][0]) ? $pos_tables[$key][0] : 0,
+                'y'=>isset($pos_tables[$key][1]) ? $pos_tables[$key][1] : 0,
                 'cols'=>$cols
             ];
         }
@@ -87,7 +87,6 @@ class cmap extends AbstractHelper
                         "targetIndex"=>1,
                         "value"=>1,
                         "nb"=>$l['nb'],
-
                     ];
                 }
             }
@@ -141,6 +140,4 @@ class cmap extends AbstractHelper
         return $rt;
       
     }
-
-
 }

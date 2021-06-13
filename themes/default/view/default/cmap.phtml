@@ -1,11 +1,14 @@
 <?php
-$cmap = $this->cmap();
+$cmap = $this->cmap('');
+//$url_ajax = $this->ajaxPos();
 ?>
 
 <script>
     let tables =  <?php echo json_encode($cmap['tables']); ?>
 
     let links = <?php echo json_encode($cmap['links']); ?>
+
+    
 
 </script>
 <style>
@@ -22,6 +25,7 @@ $cmap = $this->cmap();
 <div>
   <button onclick="c.toImg()">toImg</button>
   <button onclick="c.downloadSVG()">toSvg</button>
+  <button onclick="c.savePos()">Sauvegarder</button>
 </div>
 <div id="wrap">
   <svg id="svg" xmlns="http://www.w3.org/2000/svg" style="border:1px dashed #000;background-color: #F8F8F9;"></svg>

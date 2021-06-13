@@ -49,14 +49,14 @@ class cmap {
 
             //Initialiser la disposition dirigée par la force
             let forceSimulation = d3.forceSimulation()
-                .force('charge',d3.forceManyBody().strength(-100))//Force de charge
-                .force('forceCollide',d3.forceCollide().radius(colsWidth/2+50))//Détection de collision
+                //.force('charge',d3.forceManyBody().strength(-100))//Force de charge
+                //.force('forceCollide',d3.forceCollide().radius(colsWidth/2+50))//Détection de collision
                 .force('link',d3.forceLink().id(function(d){return d.id}))//link
             initSVG()
             //Première exécution
             function initSVG(){
                 let zoom = d3.zoom()
-                    .scaleExtent([0.1,0.6]) // normal [0.1,10]
+                    .scaleExtent([0.1,10]) // normal [0.1,10]
                     .on("zoom",function(d){
                         g.attr("transform",function(){//initialisation
                             return `translate(${d3.event.transform.x+gPosition.x},${d3.event.transform.y+gPosition.y}) scale(${d3.event.transform.k})`
@@ -74,7 +74,7 @@ class cmap {
                 gPosition.y = -gPosition.y+20
                 // svg.transition().delay(500).attr('viewBox',`${gPosition.x-20} ${gPosition.y-20} ${width} ${height}`)
                 g.transition().delay(0).attr('transform',function(){
-                    return `translate(${gPosition.x},${gPosition.y}) scale(0.6)` // normal scale(1)
+                    return `translate(${gPosition.x},${gPosition.y}) scale(1)` // normal scale(1)
                 })
             }
 
@@ -535,10 +535,26 @@ class cmap {
             URL.revokeObjectURL(blob);
         }
 
+        this.savePos = function savePos(){
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: "../page/ajaxPos",
+                data: {
+                    'itemSet': me.arr_pos
+                }
+            }).done(function(data) {
+                console.log(data)
+            })
+            .fail(function(e) {
+                console.log("error = "+JSON.stringify(e))
+            });
+        }
+
         this.func_arr_pos = function func_arr_pos(arr){
             me.arr_pos = arr
-            console.log("\n")
-            console.log(me.arr_pos)
+            //console.log("\n")
+            //console.log(me.arr_pos)
         }
 
     }
