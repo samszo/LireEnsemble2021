@@ -190,7 +190,7 @@ class cmap {
                 }
 
                 // Ajouter: position après glissement
-                me.arr_pos[d.id] = [d.fx, d.fy]
+                me.arr_pos[d.id] = [d.id_entite, d.fx, d.fy]
                 me.func_arr_pos(me.arr_pos)
 
                 // d.fx = null
@@ -539,22 +539,22 @@ class cmap {
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
-                url: "../page/ajaxPos",
+                url: "../page/ajaxPos?json=1",
                 data: {
                     'itemSet': me.arr_pos
                 }
-            }).done(function(data) {
-                console.log(data)
+            })
+            .done(function(data) {
+                alert(data.success)
             })
             .fail(function(e) {
                 console.log("error = "+JSON.stringify(e))
+                //alert(data.error)
             });
         }
 
         this.func_arr_pos = function func_arr_pos(arr){
             me.arr_pos = arr
-            //console.log("\n")
-            //console.log(me.arr_pos)
         }
 
     }

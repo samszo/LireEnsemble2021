@@ -22,34 +22,29 @@ class cmap extends AbstractHelper
         $this->api = $this->getView()->api();
         $this->proLinks = array();
 
-        //récupère les position de tables
-        // donnees statique
-        $pos_tables = array();
-        $pos_tables[2] = [-742.8473310025732, -440.32583144916237];
-        $pos_tables[3] = [-225.95295047790114, -261.6651130637969];
-        $pos_tables[5] = [-226.924073097036, 250.90025991447555];
-        $pos_tables[6] = [9.717141624595797, -86.74840754174306];
-        $pos_tables[9] = [10.943338065105536, -441.441942222486];
-        $pos_tables[11] = [10.517273774070873, 207.69672687153417];
-        $pos_tables[12] = [-480.71836904759607, -267.20274842740326];
-        $pos_tables[13] = [-480.8270277220481, -441.37898145724506];
-        $pos_tables[14] = [-479.97858262889633, -89.37682267024684];
-        $pos_tables[15] = [-480.1404756608856, 190.02576281364605];
-        $pos_tables[16] = [-229.81651328637383, 464.56802904937774];
-        $pos_tables[17] = [-224.7882680573309, -441.92302572062897];
-	    $pos_tables[4] = [];
-	    $pos_tables[7] = [];
-	    $pos_tables[10] = [];
-        $pos_tables[18] = [];
-        $pos_tables[19] = [];
+        // prendre donnee de carte
+        $query = [
+            'resource_template_id'=>20,
+        ];
+        $items = $this->api->search('items',$query,['limit'=>0])->getContent();
+	
+        foreach ($items as $i) {
+            $result_carte[] = $this->getCarteInfo($i);
+        }
 
-        $pos_tables[0] = [];
-        $pos_tables[1] = [];
-        $pos_tables[8] = [];
+        $arr_entites = array();
+        $arr_id_rs = array();
+        foreach ($result_carte[0]['nodes'] as $entites) {
+            $arr_entites[$entites['idResource']]['x'] = $entites['x'];
+            $arr_entites[$entites['idResource']]['y'] = $entites['y'];
+            $arr_entites[$entites['idResource']]['id_entite'] = $entites['id'];
+            $arr_id_rs[] = $entites['idResource'];
+        }
 
-        //récuopère les resource template
-        $resource_templates = $this->api->search('resource_templates',['limit' => 'all'
-        ])->getContent();
+        $query_rs = [
+            'id' => $arr_id_rs,
+        ];
+        $resource_templates = $this->api->search('resource_templates',$query_rs,['limit'=>0])->getContent();
 
         $tables = array();
         $links = array();
@@ -70,8 +65,9 @@ class cmap extends AbstractHelper
             $tables[] = [
                 'tableName'=>ucfirst($str_pro),
                 'id'=>$rt->id(),
-                'x'=>isset($pos_tables[$key][0]) ? $pos_tables[$key][0] : 0,
-                'y'=>isset($pos_tables[$key][1]) ? $pos_tables[$key][1] : 0,
+                'x'=>isset($arr_entites[$rt->id()]['x']) ? $arr_entites[$rt->id()]['x'] : 0,
+                'y'=>isset($arr_entites[$rt->id()]['y']) ? $arr_entites[$rt->id()]['y'] : 0,
+                'id_entite'=>$arr_entites[$rt->id()]['id_entite'],
                 'cols'=>$cols
             ];
         }
@@ -140,4 +136,32 @@ class cmap extends AbstractHelper
         return $rt;
       
     }
+
+    function getCarteInfo($oItem){
+        $title = $oItem->value('dcterms:title')->asHtml();
+        $desc = $oItem->value('dcterms:description')->asHtml();
+        $result = [
+            'title'=>$title
+            ,'desc'=>$desc
+        ];
+        $geos = $oItem->value('geom:geometry', ['all' => true]);
+        foreach ($geos as $geo) {
+            $result = $this->getGeoInfo($geo->valueResource(),$result);
+        }
+
+        return $result;
+    }
+
+    function getGeoInfo($oItem, $result){
+        $rc = $oItem->displayResourceClassLabel() ;
+        $result['nodes'][] = ['label'=>$oItem->value('dcterms:title')->asHtml()
+            ,'id'=>$oItem->id()
+            ,'idResource'=>$oItem->value('dcterms:description')->asHtml()
+            ,'x'=>$oItem->value('geom:coordX')->__toString()
+            ,'y'=>$oItem->value('geom:coordY')->__toString()
+        ];
+
+        return $result;
+    }
+
 }
