@@ -1,6 +1,5 @@
 <?php
 $cmap = $this->cmap('');
-//$url_ajax = $this->ajaxPos();
 ?>
 
 <script>
@@ -20,6 +19,14 @@ $cmap = $this->cmap('');
         dominant-baseline: middle;
         /*text-anchor: middle;*/
     }
+    .scroller_svg {
+        overflow-y:auto;
+        height:auto;
+        max-height:800px;
+        max-width: 1200px;
+        scrollbar-width: thin;
+        overflow-x: auto;
+    }
 </style>
 
 <div>
@@ -27,7 +34,7 @@ $cmap = $this->cmap('');
   <button onclick="c.downloadSVG()">toSvg</button>
   <button onclick="c.savePos()">Sauvegarder</button>
 </div>
-<div id="wrap">
+<div id="wrap" class="scroller_svg">
   <svg id="svg" xmlns="http://www.w3.org/2000/svg" style="border:1px dashed #000;background-color: #F8F8F9;"></svg>
 </div>
 

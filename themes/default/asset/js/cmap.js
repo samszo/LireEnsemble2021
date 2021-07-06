@@ -545,11 +545,11 @@ class cmap {
                 }
             })
             .done(function(data) {
-                alert(data.success)
+                alert("Enregistrer les données avec succès")
             })
             .fail(function(e) {
-                console.log("error = "+JSON.stringify(e))
-                //alert(data.error)
+                //console.log("error = "+JSON.stringify(e))
+                alert("Une erreur s'est produite lors de l'enregistrement")
             });
         }
 

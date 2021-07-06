@@ -62,15 +62,25 @@ class cmap extends AbstractHelper
                 ];
             }
             $str_pro = strlen($rt->label()) > 17 ? substr($rt->label(), 0, 17) . "..." : $rt->label();
-            $tables[] = [
-                'tableName'=>ucfirst($str_pro),
-                'id'=>$rt->id(),
-                'x'=>isset($arr_entites[$rt->id()]['x']) ? $arr_entites[$rt->id()]['x'] : 0,
-                'y'=>isset($arr_entites[$rt->id()]['y']) ? $arr_entites[$rt->id()]['y'] : 0,
-                'id_entite'=>$arr_entites[$rt->id()]['id_entite'],
-                'cols'=>$cols
-            ];
+            if (!isset($arr_entites[$rt->id()]['x']) || !isset($arr_entites[$rt->id()]['y'])) {
+                $tables[] = [
+                    'tableName'=>ucfirst($str_pro),
+                    'id'=>$rt->id(),
+                    'id_entite'=>$arr_entites[$rt->id()]['id_entite'],
+                    'cols'=>$cols
+                ];
+            } else {
+                $tables[] = [
+                    'tableName' => ucfirst($str_pro),
+                    'id' => $rt->id(),
+                    'x' => isset($arr_entites[$rt->id()]['x']) ? $arr_entites[$rt->id()]['x'] : 0,
+                    'y' => isset($arr_entites[$rt->id()]['y']) ? $arr_entites[$rt->id()]['y'] : 0,
+                    'id_entite' => $arr_entites[$rt->id()]['id_entite'],
+                    'cols' => $cols
+                ];
+            }
         }
+        // print'<pre>';print_r($tables);print'</pre>';
         //consruction de la table des liens
         foreach ($tables as $t) {
             foreach ($t['cols'] as $i => $c) {

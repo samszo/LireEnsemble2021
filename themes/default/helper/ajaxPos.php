@@ -14,6 +14,7 @@ class ajaxPos extends AbstractHelper
 
     public function __invoke()
     {
+/*
         $this->api = $this->getView()->api();
 
         $arr_data = isset($_POST['itemSet']) & is_array($_POST['itemSet']) > 0 ? $_POST['itemSet'] : null;
@@ -29,9 +30,10 @@ class ajaxPos extends AbstractHelper
                     , ['isPartial'=>true, 'continueOnError' => true, 'collectionAction' => 'append']);
             }
         }
-
+s
         $form_data['success'] = "Enregistrer les données avec succès";
         $form_data['error'] = "Une erreur s'est produite lors de l'enregistrement";
         return json_encode($form_data);
+*/
     }
 }
