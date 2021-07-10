@@ -1,5 +1,6 @@
 <?php
 $cmap = $this->cmap('');
+$user = $this->identity();
 ?>
 
 <script>
@@ -32,7 +33,13 @@ $cmap = $this->cmap('');
 <div>
   <button onclick="c.toImg()">toImg</button>
   <button onclick="c.downloadSVG()">toSvg</button>
-  <button onclick="c.savePos()">Sauvegarder</button>
+  <?php
+  if (isset($user) && $user->getId() > 0) {
+  ?>
+    <button onclick="c.savePos()">Sauvegarder</button>
+  <?php
+  }
+  ?>
 </div>
 <div id="wrap" class="scroller_svg">
   <svg id="svg" xmlns="http://www.w3.org/2000/svg" style="border:1px dashed #000;background-color: #F8F8F9;"></svg>
