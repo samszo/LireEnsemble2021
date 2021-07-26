@@ -73,6 +73,7 @@ class cmap extends AbstractHelper
                 $tables[] = [
                     'tableName' => ucfirst($str_pro),
                     'id' => $rt->id(),
+                    'k' => 0.6,
                     'x' => isset($arr_entites[$rt->id()]['x']) ? $arr_entites[$rt->id()]['x'] : 0,
                     'y' => isset($arr_entites[$rt->id()]['y']) ? $arr_entites[$rt->id()]['y'] : 0,
                     'id_entite' => $arr_entites[$rt->id()]['id_entite'],
@@ -80,14 +81,19 @@ class cmap extends AbstractHelper
                 ];
             }
         }
-        // print'<pre>';print_r($tables);print'</pre>';
+        //print'<pre>';print_r($tables);print'</pre>';
+        $keyTemp = [];
+        foreach ($tables as $key=>$t) {
+            $keyTemp[$t['id']]['key'] = $key;
+            $keyTemp[$t['id']]['name'] = $t['tableName'];
+        }
         //consruction de la table des liens
-        foreach ($tables as $t) {
+        foreach ($tables as $key=>$t) {
             foreach ($t['cols'] as $i => $c) {
                 foreach ($c['links'] as $l) {
-                    $links[]=[                    
-                        "source"=>$t['id'],
-                        "target"=>$l['id'],
+                    $links[]=[
+                        "source"=>$keyTemp[$t['id']]['key'],
+                        "target"=>$keyTemp[$l['id']]['key'],
                         "relation"=>'line1',
                         "sourceIndex"=>$i+1,
                         "targetIndex"=>1,
@@ -167,8 +173,8 @@ class cmap extends AbstractHelper
         $result['nodes'][] = ['label'=>$oItem->value('dcterms:title')->asHtml()
             ,'id'=>$oItem->id()
             ,'idResource'=>$oItem->value('dcterms:description')->asHtml()
-            ,'x'=>$oItem->value('geom:coordX')->__toString()
-            ,'y'=>$oItem->value('geom:coordY')->__toString()
+            ,'x'=>(float)$oItem->value('geom:coordX')->__toString()
+            ,'y'=>(float)$oItem->value('geom:coordY')->__toString()
         ];
 
         return $result;

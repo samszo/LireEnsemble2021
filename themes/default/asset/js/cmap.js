@@ -10,8 +10,6 @@ class cmap {
         let svg = d3.select('svg')
             .attr('width',me.width)
             .attr('height',me.height)
-        // .attr('viewBox',`-${width/2} -${height/2} ${width} ${height}`)
-
 
         let colsHeight = 30;//Hauteur du champ
         let tableTitleHeight = 30;//Hauteur du champ
@@ -38,7 +36,6 @@ class cmap {
             fillLight:'#19be6b',
         }
 
-
         let initObj = initData(svg);
         initObj.svgAddNode()
         window.setTimeout(initObj.changePort,100)
@@ -47,11 +44,6 @@ class cmap {
             //initialisation
             let g, gPosition;
 
-            //Initialiser la disposition dirigée par la force
-            let forceSimulation = d3.forceSimulation()
-                //.force('charge',d3.forceManyBody().strength(-100))//Force de charge
-                //.force('forceCollide',d3.forceCollide().radius(colsWidth/2+50))//Détection de collision
-                .force('link',d3.forceLink().id(function(d){return d.id}))//link
             initSVG()
             //Première exécution
             function initSVG(){
@@ -72,43 +64,22 @@ class cmap {
                 gPosition = svgEle.select('g').node().getBBox()
                 gPosition.x = -gPosition.x+20
                 gPosition.y = -gPosition.y+20
-                // svg.transition().delay(500).attr('viewBox',`${gPosition.x-20} ${gPosition.y-20} ${width} ${height}`)
+
                 g.transition().delay(0).attr('transform',function(){
                     return `translate(${gPosition.x},${gPosition.y}) scale(1)` // normal scale(1)
                 })
             }
-
 
             //dessiner
 
             let allTables, addTablesData, allLinks, addLinksData, allColsGs, addColsGsData,allFooter, addFooterData;
 
             function svgAddNode(){
-                forceInit(me.tables,me.links)
                 addTables()
                 addLinks()
                 initDrag()
             }
 
-            function tick(){//force Fonction d'exécution itérative
-                allTables.attr("transform", function(d){
-                    return `translate(${d.x},${d.y})`
-                })
-                allLinks.attr('points',linkFn)
-            }
-            function end(){//force fonction de fin
-
-            }
-            function forceInit(nodes,links){//Ajouter des attributs d'emplacement aux objets d'origine des nœuds et des liens
-                forceSimulation.nodes(nodes)
-                    .on('end',end)
-                    .on('tick',tick);
-                forceSimulation.force('link')
-                    .links(me.links)
-                    .distance(function (d) {
-                        return d.value * colsWidth + 100
-                    })
-            }
             function addTables(){
                 addTablesData = g.selectAll('.tbClass').data(me.tables)
                     .enter()
@@ -118,6 +89,9 @@ class cmap {
                     .attr("transform", function(d){
                         return `translate(${d.x},${d.y})`
                     })
+                    .attr("cx", function(d) { return d.x; })
+                    .attr("cy", function(d) { return d.y; })
+
                 allTables = g.selectAll('.tbClass').data(me.tables)
 
                 addTitle()
@@ -131,7 +105,7 @@ class cmap {
             }
             function initDrag(){
                 allTables.call(d3.drag()//Ajouter un événement glisser
-                    .on('start',startFn)
+                    //.on('start',startFn)
                     .on('drag',dragFn)
                     .on('end',endFn)
                 )
@@ -143,70 +117,98 @@ class cmap {
                         hoverLight.call(this,d,0)
                     })
             }
+
             //Calcul de connexion gauche et droite
             function linkFn(d){
                 let res = []
-                if(d.source.x < d.target.x){
-                    res[2] = [d.target.x - offLine, d.target.y]
-                    res[3] = [d.target.x, d.target.y]
-                    if((d.source.x + colsWidth + offLine*0) < d.target.x ){
-                        res[0] = [d.source.x + colsWidth, d.source.y]
-                        res[1] = [d.source.x + colsWidth + offLine, d.source.y]
+
+                let source_x = me.tables[d.source].x;
+                let source_y = me.tables[d.source].y;
+
+                let target_x = me.tables[d.target].x;
+                let target_y = me.tables[d.target].y;
+
+                if(source_x < target_x){
+                    res[2] = [target_x - offLine, target_y]
+                    res[3] = [target_x, target_y]
+                    if((source_x + colsWidth + offLine*0) < target_x ){
+                        res[0] = [source_x + colsWidth, source_y]
+                        res[1] = [source_x + colsWidth + offLine, source_y]
                     }else{
-                        res[0] = [d.source.x, d.source.y]
-                        res[1] = [d.source.x - offLine, d.source.y]
+                        res[0] = [source_x, source_y]
+                        res[1] = [source_x - offLine, source_y]
                     }
                 }else{
-                    res[1] = [d.source.x - offLine, d.source.y]
-                    res[0] = [d.source.x, d.source.y]
-                    if((d.target.x + colsWidth + offLine*0) < d.source.x ){
-                        res[3] = [d.target.x + colsWidth, d.target.y]
-                        res[2] = [d.target.x + colsWidth + offLine, d.target.y]
+                    res[1] = [source_x - offLine, source_y]
+                    res[0] = [source_x, source_y]
+                    if((target_x + colsWidth + offLine*0) < source_x ){
+                        res[3] = [target_x + colsWidth, target_y]
+                        res[2] = [target_x + colsWidth + offLine, target_y]
                     }else{
-                        res[3] = [d.target.x, d.target.y]
-                        res[2] = [d.target.x  - offLine, d.target.y]
+                        res[3] = [target_x, target_y]
+                        res[2] = [target_x  - offLine, target_y]
                     }
                 }
                 res[0][1] += d.sourceIndex*colsHeight + colsHeight/2
                 res[1][1] += d.sourceIndex*colsHeight + colsHeight/2
                 res[2][1] += d.targetIndex*colsHeight + colsHeight/2
                 res[3][1] += d.targetIndex*colsHeight + colsHeight/2
+
                 return res.map(v=>v.join(',')).join(' ')
             }
-            function startFn(d){//Faites glisser le début
-                if(!d3.event.active){
-                    forceSimulation.alphaTarget(0.8).restart()//[0,1]
-                }
-                d.fx = d.x
-                d.fy = d.y
+
+            function dragFn(d, i){//Faire glisser
+                d.x += d3.event.dx
+                d.y += d3.event.dy
+                d3.select(this).attr("cx", d.x).attr("cy", d.y);
+
+                allTables.attr("transform", function(d){
+                    return `translate(${d.x},${d.y})`
+                })
+
+                addLinksData.each(function(l, li) {
+                    if (l.source == i) {
+                        d3.select(this).attr("x1", d.x).attr("y1", d.y).attr('points',linkFn);;
+                    } else if (l.target == i) {
+                        d3.select(this).attr("x2", d.x).attr("y2", d.y).attr('points',linkFn);;
+                    }
+                });
             }
-            function dragFn(d){//Faire glisser
-                d.fx = d3.event.x
-                d.fy = d3.event.y
-            }
+
             function endFn(d){//Faites glisser la fin
-                if(!d3.event.active){
-                    forceSimulation.alphaTarget(0)
-                }
-
                 // Ajouter: position après glissement
-                me.arr_pos[d.id] = [d.id_entite, d.fx, d.fy]
+                me.arr_pos[d.id] = [d.id_entite, d.x, d.y]
                 me.func_arr_pos(me.arr_pos)
-
-                // d.fx = null
-                // d.fy = null
             }
+
             //Ajouter une connexion
             function addLinks(){
                 addLinksData = d3.select('.links')
-                    .selectAll("polyline")
+                    .selectAll("link")
                     .data(me.links)
                     .enter()
                     .append("polyline")
+                    //.append("line")
                     .attr("fill",'none')
                     .attr("stroke",'#000')
                     .attr("stroke-width",2)
                     .attr('class','link-polyline')
+                    .attr("x1", function(l) {
+                        var sourceNode = me.tables.filter(function(d, i) {
+                            return i == l.source
+                        })[0];
+                        d3.select(this).attr("y1", sourceNode.y);
+                        return sourceNode.x
+                    })
+                    .attr("x2", function(l) {
+                        var targetNode = me.tables.filter(function(d, i) {
+                            return i == l.target
+                        })[0];
+                        d3.select(this).attr("y2", targetNode.y);
+                        return targetNode.x
+                    })
+                    .attr("marker-end", "url(#arrow)")
+                    .attr('points',linkFn);
 
                 //arrow
                 svg.append("svg:defs").append("svg:marker")
@@ -220,11 +222,6 @@ class cmap {
                     .append("path")
                     .attr("d", "M 0 0 12 6 0 12 3 6")
                     .style("fill", "black");
-
-                allLinks =  d3.select('.links')
-                    .selectAll('polyline')
-                    .data(me.links)
-                    .attr("marker-end", "url(#arrow)")
             }
             function delLinks(){
                 // allLinks =  d3.select('.links')
@@ -366,9 +363,10 @@ class cmap {
             //Surbrillance de la ligne
             function lineLight(data,isEnter){
                 d3.selectAll('.link-polyline')
+                    //d3.selectAll('.link-line')
                     .attr('stroke',function(d){
-                        let source = d.source.cols[d.sourceIndex-1]
-                        let target = d.target.cols[d.targetIndex-1]
+                        let source = me.tables[d.source].cols[d.sourceIndex-1]
+                        let target = me.tables[d.target].cols[d.targetIndex-1]
                         if(data.id === source.id || data.id === target.id ){
                             return isEnter ? lineStyle.strokeLight : lineStyle.strokeDefault
                         }else{
@@ -376,8 +374,8 @@ class cmap {
                         }
                     })
                     .attr('stroke-width',function(d){
-                        let source = d.source.cols[d.sourceIndex-1]
-                        let target = d.target.cols[d.targetIndex-1]
+                        let source = me.tables[d.source].cols[d.sourceIndex-1]
+                        let target = me.tables[d.target].cols[d.targetIndex-1]
                         if(data.id === source.id || data.id === target.id ){
                             return isEnter ? lineStyle.strokeWidthLight : lineStyle.strokeWidthDefault
                         }else{
@@ -544,13 +542,13 @@ class cmap {
                     'itemSet': me.arr_pos
                 }
             })
-            .done(function(data) {
-                alert("Enregistrer les données avec succès")
-            })
-            .fail(function(e) {
-                //console.log("error = "+JSON.stringify(e))
-                alert("Une erreur s'est produite lors de l'enregistrement")
-            });
+                .done(function(data) {
+                    alert("Enregistrer les données avec succès")
+                })
+                .fail(function(e) {
+                    //console.log("error = "+JSON.stringify(e))
+                    alert("Une erreur s'est produite lors de l'enregistrement")
+                });
         }
 
         this.func_arr_pos = function func_arr_pos(arr){
@@ -559,6 +557,3 @@ class cmap {
 
     }
 }
-
-
-
