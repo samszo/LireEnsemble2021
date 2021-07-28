@@ -1,7 +1,7 @@
 class cmap {
     constructor(params) {
         var me = this;
-        this.width = params.width ? params.width : 1200;
+        this.width = params.width ? params.width : 1400;
         this.height = params.height ? params.height : 800;
         this.tables = params.tables
         this.links = params.links
@@ -213,7 +213,7 @@ class cmap {
                 //arrow
                 svg.append("svg:defs").append("svg:marker")
                     .attr("id", "arrow")
-                    .attr("refX", 6)
+                    .attr("refX", 12)
                     .attr("refY", 6)
                     .attr("markerWidth", 30)
                     .attr("markerHeight", 30)
