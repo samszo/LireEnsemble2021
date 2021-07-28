@@ -11,10 +11,10 @@ class cmap {
             .attr('width',me.width)
             .attr('height',me.height)
 
-        let colsHeight = 30;//Hauteur du champ
-        let tableTitleHeight = 30;//Hauteur du champ
-        let tableFootHeight = 30;//Hauteur du champ
-        let colsWidth = 200;
+        let colsHeight = 20;//Hauteur du champ
+        let tableTitleHeight = 25;//Hauteur du champ
+        let tableFootHeight = 25;//Hauteur du champ
+        let colsWidth = 130;
         let offLine = 20;//Décalage de nœud
 
         let btnText = {
@@ -27,9 +27,9 @@ class cmap {
         //Définition du style
         let lineStyle = {
             strokeDefault:'#80848f',
-            strokeWidthDefault:'2',
+            strokeWidthDefault:'1',
             strokeLight:'#19be6b',
-            strokeWidthLight:'3',
+            strokeWidthLight:'1',
         }
         let colsStyle = {
             fillDefalt:'#ccc',
@@ -190,8 +190,8 @@ class cmap {
                     .append("polyline")
                     //.append("line")
                     .attr("fill",'none')
-                    .attr("stroke",'#000')
-                    .attr("stroke-width",2)
+                    .attr("stroke",'#80848f')
+                    .attr("stroke-width",1)
                     .attr('class','link-polyline')
                     .attr("x1", function(l) {
                         var sourceNode = me.tables.filter(function(d, i) {
@@ -221,7 +221,7 @@ class cmap {
                     .attr("orient", "auto")
                     .append("path")
                     .attr("d", "M 0 0 12 6 0 12 3 6")
-                    .style("fill", "black");
+                    .style("fill", "#80848f");
             }
             function delLinks(){
                 // allLinks =  d3.select('.links')
