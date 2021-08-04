@@ -34,21 +34,31 @@ $user = $this->identity();
     }
 </style>
 
-<div>
-  <button onclick="c.toImg()">toImg</button>
-  <button onclick="c.downloadSVG()">toSvg</button>
-  <?php
-  if (isset($user) && $user->getId() > 0) {
-  ?>
-    <button onclick="c.savePos()">Sauvegarder</button>
-  <?php
-  }
-  ?>
-</div>
+<form action="" method="post">
+    <div>
+      <button onclick="c.toImg()">toImg</button>
+      <button onclick="c.downloadSVG()">toSvg</button>
+      <?php
+      if (isset($user) && $user->getId() > 0) {
+      ?>
+        <button onclick="c.savePos()">Sauvegarder</button>
+      <?php
+      }
+      ?>
+        <select name="cartes" id="cartes" onchange="javascript:this.form.submit()">
+            <?php
+            foreach ($cmap['lst_item_set'] as $id_i_s=>$title) {
+            ?>
+                <option value="<?= $id_i_s ?>" <?= $cmap['sel_carte'] == $id_i_s ? "selected" : "" ?>><?= $title ?></option>
+            <?php
+            }
+            ?>
+        </select>
+    </div>
+</form>
 <div id="wrap" class="scroller_svg">
   <svg id="svg" xmlns="http://www.w3.org/2000/svg" style="border:1px dashed #000;background-color: #F8F8F9;"></svg>
 </div>
-
 
 <script>
     var c = new cmap({'width':1400,'height':800,'tables':tables, 'links':links})

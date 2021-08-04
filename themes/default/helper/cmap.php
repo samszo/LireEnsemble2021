@@ -22,12 +22,23 @@ class cmap extends AbstractHelper
         $this->api = $this->getView()->api();
         $this->proLinks = array();
 
+        $params = isset($_POST['cartes']) ? $_POST['cartes'] : 134; // default Carte_1
+
+        // prendre liste de cartes
+        $query_items_set = [
+            'item_set_id'=>152, // collection cmap
+        ];
+        $items_set = $this->api->search('items',$query_items_set,['limit'=>0])->getContent();
+        foreach ($items_set as $i_s) {
+            $lst_item_set[$i_s->id()] = $i_s->title();
+        }
+
         // prendre donnee de carte
         $query = [
-            'resource_template_id'=>20,
+            'id'=>$params,
         ];
         $items = $this->api->search('items',$query,['limit'=>0])->getContent();
-	
+
         foreach ($items as $i) {
             $result_carte[] = $this->getCarteInfo($i);
         }
@@ -92,8 +103,8 @@ class cmap extends AbstractHelper
             foreach ($t['cols'] as $i => $c) {
                 foreach ($c['links'] as $l) {
                     $links[]=[
-                        "source"=>$keyTemp[$t['id']]['key'],
-                        "target"=>$keyTemp[$l['id']]['key'],
+                        "source"=>isset($keyTemp[$t['id']]['key']) ? $keyTemp[$t['id']]['key'] : 0,
+                        "target"=>isset($keyTemp[$l['id']]['key']) ? $keyTemp[$l['id']]['key'] : 0,
                         "relation"=>'line1',
                         "sourceIndex"=>$i+1,
                         "targetIndex"=>1,
@@ -106,7 +117,9 @@ class cmap extends AbstractHelper
 
         return [
             'tables' => $tables,
-            'links' => $links
+            'links' => $links,
+            'lst_item_set' => $lst_item_set,
+            'sel_carte' => $params,
             ];
     }
 
@@ -170,9 +183,24 @@ class cmap extends AbstractHelper
 
     function getGeoInfo($oItem, $result){
         $rc = $oItem->displayResourceClassLabel() ;
-        $result['nodes'][] = ['label'=>$oItem->value('dcterms:title')->asHtml()
+
+        $id_res = 0;
+
+        $resource_templates = $this->api->search('resource_templates')->getContent();
+        foreach ($resource_templates as $key=>$rt) {
+            $pros = $rt->resourceClass();
+
+            if ($pros != null) {
+                if ($pros->id() == $oItem->resourceClass()->id()) {
+                    $id_res = $rt->id();
+                }
+            }
+        }
+
+        $result['nodes'][] = [
+            'label'=>$oItem->value('dcterms:title')->asHtml()
             ,'id'=>$oItem->id()
-            ,'idResource'=>$oItem->value('dcterms:description')->asHtml()
+            ,'idResource'=>$id_res
             ,'x'=>(float)$oItem->value('geom:coordX')->__toString()
             ,'y'=>(float)$oItem->value('geom:coordY')->__toString()
         ];
