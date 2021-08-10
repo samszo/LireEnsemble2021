@@ -8,6 +8,12 @@ class cmap extends AbstractHelper
     var $api;
     //pour éviter de faire plusieurs fois le traitement
     var $proLinks;
+    //prendre default 'collection map' dans collection
+    var $default_collection = 152;
+    //vocabulary: Tibor & BnF
+    var $default_vocabulary_id = 7;
+    //default carte afficher
+    var $default_carte;
 
     /**
      * Get resosurce templates
@@ -22,18 +28,30 @@ class cmap extends AbstractHelper
         $this->api = $this->getView()->api();
         $this->proLinks = array();
 
-        $params = isset($_POST['cartes']) ? $_POST['cartes'] : 134; // default Carte_1
+        // creer new carte
+        if (isset($_POST['name_carte'])) {
+            $this->add_carte();
+        }
 
-        // prendre liste de cartes
+        // prendre liste de cartes: "Collection"
         $query_items_set = [
-            'item_set_id'=>152, // collection cmap
+            'item_set_id'=>$this->default_collection, // collection cmap
         ];
         $items_set = $this->api->search('items',$query_items_set,['limit'=>0])->getContent();
         foreach ($items_set as $i_s) {
-            $lst_item_set[$i_s->id()] = $i_s->title();
+            // couper nom si long
+            $str_nom = $i_s->title();
+            if (strlen($str_nom) > 30) {
+                $str_nom = substr($str_nom, 0, 30) . '...';
+            }
+            $lst_item_set[$i_s->id()] = $str_nom;
+            $this->default_carte = $i_s->id();
         }
+        asort($lst_item_set);
 
-        // prendre donnee de carte
+        $params = isset($_POST['cartes']) ? $_POST['cartes'] : $this->default_carte; // default carte fin
+
+        // prendre donnee de carte: "Contenu"
         $query = [
             'id'=>$params,
         ];
@@ -84,7 +102,6 @@ class cmap extends AbstractHelper
                 $tables[] = [
                     'tableName' => ucfirst($str_pro),
                     'id' => $rt->id(),
-                    'k' => 0.6,
                     'x' => isset($arr_entites[$rt->id()]['x']) ? $arr_entites[$rt->id()]['x'] : 0,
                     'y' => isset($arr_entites[$rt->id()]['y']) ? $arr_entites[$rt->id()]['y'] : 0,
                     'id_entite' => $arr_entites[$rt->id()]['id_entite'],
@@ -92,7 +109,7 @@ class cmap extends AbstractHelper
                 ];
             }
         }
-        //print'<pre>';print_r($tables);print'</pre>';
+
         $keyTemp = [];
         foreach ($tables as $key=>$t) {
             $keyTemp[$t['id']]['key'] = $key;
@@ -120,7 +137,28 @@ class cmap extends AbstractHelper
             'links' => $links,
             'lst_item_set' => $lst_item_set,
             'sel_carte' => $params,
+            'chk_classes' => $this->getListClasses(),
             ];
+    }
+
+    /**
+     * Get classes de vocabulary 7 (Tibor & BnF)
+     * http://omeka-s-cmap.local/api/resource_classes?pretty_print=1&vocabulary_id=7
+     * @param
+     * @return array
+     */
+
+    function getListClasses() {
+        // prendre liste de class: "Vocabulary = 7"
+        $query_classes = [
+            'vocabulary_id' => $this->default_vocabulary_id, // collection cmap
+        ];
+        $data_classes = $this->api->search('resource_classes',$query_classes,['limit'=>0])->getContent();
+        foreach ($data_classes as $classes) {
+            $chk_classes[$classes->id()] = $classes->label();
+        }
+        asort($chk_classes);
+        return $chk_classes;
     }
 
 
@@ -206,6 +244,25 @@ class cmap extends AbstractHelper
         ];
 
         return $result;
+    }
+
+    /**
+     * creer new carte
+     * @param
+     * @return array
+     */
+
+    function add_carte() {
+        $params['name_carte'] = $_POST['name_carte'];
+        $params['default_collection'] = $this->default_collection;
+        $action = 'addPosition';
+        $params['chk_class'] = [];
+        foreach ($_POST['chk_class'] as $str_class) {
+            $arr_class = explode(":", $str_class);
+            $params['chk_class'][$arr_class[0]] = $arr_class[1];
+        }
+
+        $this->getView()->EntityRelationFactory($action, $params);
     }
 
 }

@@ -32,32 +32,154 @@ $user = $this->identity();
     .tbClass{
         font-size: 12px;
     }
+
+    button, a.button, .resource-list.preview+a, [type="submit"], .but_cancel {
+        background-color: #BFBFBF;
+        color: #000;
+    }
+    .but_cancel:hover {
+        color: #fff;
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
 </style>
 
-<form action="" method="post">
-    <div>
-      <button onclick="c.toImg()">toImg</button>
-      <button onclick="c.downloadSVG()">toSvg</button>
-      <?php
-      if (isset($user) && $user->getId() > 0) {
-      ?>
-        <button onclick="c.savePos()">Sauvegarder</button>
-      <?php
-      }
-      ?>
-        <select name="cartes" id="cartes" onchange="javascript:this.form.submit()">
+<script>
+    function show_add_carte() {
+        document.getElementById('but_save_pos').style.visibility = 'hidden';
+        $("#navbarSupportedContent li").hide();
+
+        var x = document.getElementById("frm_add_carte");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+
+        var y = document.getElementById("wrap");
+        if (y.style.display === "block") {
+            y.style.display = "none";
+        } else {
+            y.style.display = "block";
+        }
+    }
+
+    function checkSelected() {
+        var txt_name = document.getElementById('name_carte');
+        if (txt_name.value === '') {
+            alert('Entrer le nom de la carte');
+            txt_name.focus();
+            return false;
+        } else {
+            var checkboxes = document.getElementsByName("chk_class[]");
+            var numberOfCheckedItems = 0;
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked)
+                    numberOfCheckedItems++;
+            }
+            if (numberOfCheckedItems == 0) {
+                alert("Veuillez choisir au moins 1 class");
+                return false;
+            } else {
+                frm_add.submit();
+            }
+        }
+    }
+</script>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <form action="" method="post" id="frm_sel">
+                        <select name="cartes" id="cartes" onchange="javascript:frm_sel.submit()">
+                            <?php
+                            foreach ($cmap['lst_item_set'] as $id_i_s=>$title) {
+                                ?>
+                                <option value="<?= $id_i_s ?>" <?= $cmap['sel_carte'] == $id_i_s ? "selected" : "" ?> class="dropdown-item"><?= $title ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </form>
+                </li>
+                <li class="nav-item" id="toImg">
+                    <a class="nav-link" href="#" onclick="c.toImg()">toImg</a>
+                </li>
+                <li class="nav-item" id="toSvg">
+                    <a class="nav-link" href="#" onclick="c.downloadSVG()">toSvg</a>
+                </li>
+            </ul>
             <?php
-            foreach ($cmap['lst_item_set'] as $id_i_s=>$title) {
+            if (isset($user) && $user->getId() > 0) {
             ?>
-                <option value="<?= $id_i_s ?>" <?= $cmap['sel_carte'] == $id_i_s ? "selected" : "" ?>><?= $title ?></option>
-            <?php
+            <div class="d-flex">
+                <button class="btn btn-outline-success" onclick="c.savePos()" id="but_save_pos">Sauvegarder Position</button>
+                &nbsp;&nbsp;&nbsp;
+                <button class="btn btn-outline-success" onclick="show_add_carte()">Créer un nouvelle carte</button>
+            </div>
+                <?php
             }
             ?>
-        </select>
+        </div>
     </div>
-</form>
-<div id="wrap" class="scroller_svg">
+</nav>
+
+<div id="wrap" class="scroller_svg" style="display: block">
   <svg id="svg" xmlns="http://www.w3.org/2000/svg" style="border:1px dashed #000;background-color: #F8F8F9;"></svg>
+</div>
+
+<div id="frm_add_carte" style="display: none; padding-top: 10px;">
+    <div style="border:1px dashed #000;background-color: #F8F8F9; padding: 20px;">
+    <form action="" method="post" id="frm_add" onsubmit="return checkSelected();">
+        <div class="form-group row">
+            <label for="inputName" class="col-sm-2 col-form-label">Nom carte (*)</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control"  name="name_carte" id="name_carte" placeholder="Nom carte">
+            </div>
+        </div>
+        <fieldset class="form-group">
+            <div class="row">
+                <div class="col-sm-2">Les classes (*)</div>
+                <div class="col-sm-10">
+                    <div class="row">
+                    <div class="col-sm-4">
+                    <?php
+                    $i = 1;
+                    foreach ($cmap['chk_classes'] as $id=>$class) {
+                    ?>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="gridCheck1" name="chk_class[]" class="clonecheckbox" value="<?= $id . ':' . $class ?>">
+                            <label class="form-check-label" for="gridCheck1">
+                                <?= $class ?>
+                            </label>
+                        </div>
+                    <?php
+                        if ($i%3 == 0) {
+                            print '</div><div class="col-sm-4">';
+                        }
+
+                        $i++;
+                    }
+                    ?>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-group row">
+            <div class="col-sm-10" style="text-align: center;">
+                <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                &nbsp;&nbsp;&nbsp;
+                <input type="button" class="btn but_cancel" onclick="location.reload()" value="Annuler"/>
+            </div>
+        </div>
+    </form>
+    </div>
 </div>
 
 <script>

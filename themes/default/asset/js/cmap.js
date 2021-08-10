@@ -190,7 +190,7 @@ class cmap {
                     .append("polyline")
                     //.append("line")
                     .attr("fill",'none')
-                    .attr("stroke",'#80848f')
+                    .attr("stroke",'#000')
                     .attr("stroke-width",1)
                     .attr('class','link-polyline')
                     .attr("x1", function(l) {
@@ -221,7 +221,7 @@ class cmap {
                     .attr("orient", "auto")
                     .append("path")
                     .attr("d", "M 0 0 12 6 0 12 3 6")
-                    .style("fill", "#80848f");
+                    .style("fill", "#000");
             }
             function delLinks(){
                 // allLinks =  d3.select('.links')
@@ -539,7 +539,8 @@ class cmap {
                 dataType: 'json',
                 url: "../page/ajaxPos?json=1",
                 data: {
-                    'itemSet': me.arr_pos
+                    'itemSet': me.arr_pos,
+                    'action': 'updatePosition'
                 }
             })
                 .done(function(data) {
