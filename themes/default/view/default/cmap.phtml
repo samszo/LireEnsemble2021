@@ -97,6 +97,7 @@ $user = $this->identity();
                 <li class="nav-item">
                     <form action="" method="post" id="frm_sel">
                         <select name="cartes" id="cartes" onchange="javascript:frm_sel.submit()">
+                            <option value="0">Carte des entités</option>
                             <?php
                             foreach ($cmap['lst_item_set'] as $id_i_s=>$title) {
                                 ?>
