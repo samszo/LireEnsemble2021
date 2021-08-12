@@ -1,8 +1,6 @@
 <?php
-//$ajax = $this->ajaxPos();
-
 $params = $this->params()->fromPost('itemSet',false);
-$action = $this->params()->fromPost('action', true); // updatePosition
+$action = $this->params()->fromPost('action', true);
 $result = $this->EntityRelationFactory($action, $params);
 echo json_encode($result);
 ?>

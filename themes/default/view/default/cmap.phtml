@@ -8,7 +8,7 @@ $user = $this->identity();
 
     let links = <?php echo json_encode($cmap['links']); ?>
 
-    
+    let site_url = "<?php echo $site->url(); ?>"
 
 </script>
 <style>
@@ -183,6 +183,24 @@ $user = $this->identity();
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="postModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    var c = new cmap({'width':1400,'height':800,'tables':tables, 'links':links})
+    var c = new cmap({'width':1400,'height':800,'tables':tables, 'links':links, 'site_url':site_url})
 </script>

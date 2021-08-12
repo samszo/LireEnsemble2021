@@ -5,6 +5,7 @@ class cmap {
         this.height = params.height ? params.height : 800;
         this.tables = params.tables
         this.links = params.links
+        this.site_url = params.site_url
         this.arr_pos = []
 
         let svg = d3.select('svg')
@@ -271,7 +272,41 @@ class cmap {
                     .attr('text-anchor','middle')
                     .attr('dominant-baseline','middle')
                     .attr('fill','#000')
+                    .style('cursor','pointer')
+                    .on('click',listItem)
             }
+
+            // afficher list contenus de class
+            function listItem(d){
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: "../page/ajaxPos?json=1",
+                    data: {
+                        'itemSet': d.id,
+                        'action': 'listItem'
+                    }
+                })
+                .done(function(data) {
+                    var parsed = JSON.parse(data.success);
+                    var str_content = "<table>";
+                    $.each(parsed, function (key, val) {
+                        str_content += "<tr><td><a href='" + me.site_url + "/item/" + val.id + "' target='_blank'>" + val.title + "</a></td></tr>";
+                    });
+                    str_content += "</table>";
+
+                    $('#postModal h5#postModalLabel').text('List contenus de ' + d.tableName);// title
+                    $('#postModal .modal-body').html(str_content); // content
+
+                    var postModal = new bootstrap.Modal(document.getElementById('postModal'));
+                    postModal.show();
+                })
+                .fail(function(e) {
+                    //console.log("error = "+JSON.stringify(e))
+                    alert("Une erreur s'est produite")
+                });
+            }
+
             //Créer un champ g
             function addColsWrap(){
                 addTablesData.append('g')
