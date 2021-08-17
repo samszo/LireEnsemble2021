@@ -295,7 +295,7 @@ class cmap {
                     });
                     str_content += "</table>";
 
-                    $('#postModal h5#postModalLabel').text('List contenus de ' + d.tableName);// title
+                    $('#postModal h5#postModalLabel').text(parsed.length + (parsed.length > 1 ? ' items' : ' item') + ' de la classe: ' + d.tableName);// title
                     $('#postModal .modal-body').html(str_content); // content
 
                     var postModal = new bootstrap.Modal(document.getElementById('postModal'));
@@ -376,6 +376,8 @@ class cmap {
                     .attr('dy',colsHeight/2)
                     .attr('dominant-baseline','middle')
                     .attr('fill','#000')
+                    .style('cursor','pointer')
+                    .on('click',valeurPro)
 
                 //Ajouter un surlignage
                 addColsGsData.on('mouseenter',function(d){
@@ -385,6 +387,39 @@ class cmap {
                         colsLight.call(this,d,0)
                     })
             }
+
+            // afficher valeur de propriétés
+            function valeurPro(d){
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: "../page/ajaxPos?json=1",
+                    data: {
+                        'itemSet': [d.id_rt, d.id], // id resource template, id propriété
+                        'action': 'valeurPro'
+                    }
+                })
+                .done(function(data) {
+                    var parsed = JSON.parse(data.success);
+                    var str_content = "<table>";
+                    $.each(parsed, function (key, val) {
+                        str_content += "<tr><td><a href='" + me.site_url + "/item/" + val.id + "' target='_blank'>" + val.v_p + "</a></td></tr>";
+                    });
+                    str_content += "</table>";
+
+                    $('#postModal h5#postModalLabel').text(parsed.length + (parsed.length > 1 ? ' valeurs' : ' valeur') + ' de propriétés: ' + d.itemName);// title
+                    $('#postModal .modal-body').html(str_content); // content
+
+                    var postModal = new bootstrap.Modal(document.getElementById('postModal'));
+                    postModal.show();
+
+                })
+                .fail(function(e) {
+                    //console.log("error = "+JSON.stringify(e))
+                    alert("Une erreur s'est produite")
+                });
+            }
+
             //Surbrillance du nœud
             function colsLight(data,isEnter){
                 lineLight(data,isEnter)
@@ -579,7 +614,10 @@ class cmap {
                 }
             })
                 .done(function(data) {
-                    alert("Enregistrer les données avec succès")
+                    $('#postModal .modal-body').html("Enregistrer les données avec succès"); // content
+
+                    var postModal = new bootstrap.Modal(document.getElementById('postModal'));
+                    postModal.show();
                 })
                 .fail(function(e) {
                     //console.log("error = "+JSON.stringify(e))

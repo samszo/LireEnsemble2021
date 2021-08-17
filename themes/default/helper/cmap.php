@@ -95,6 +95,7 @@ class cmap extends AbstractHelper
                     $cols[] = [
                         'itemName' => ucfirst($str_title)
                         , 'id' => $p->id()
+                        , 'id_rt' => $rt->id()
                         , 'links' => $this->getPropertyLinks($p)
                     ];
                 }
