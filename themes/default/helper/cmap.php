@@ -105,7 +105,8 @@ class cmap extends AbstractHelper
                         'tableName' => ucfirst($str_pro),
                         'id' => $rt->id(),
                         'id_entite' => $arr_entites[$rt->id()]['id_entite'],
-                        'cols' => $cols
+                        'cols' => $cols,
+                        'nbItem' => $rt->itemCount()
                     ];
                 } else {
                     $tables[] = [
@@ -114,6 +115,7 @@ class cmap extends AbstractHelper
                         'x' => isset($arr_entites[$rt->id()]['x']) ? $arr_entites[$rt->id()]['x'] : 0,
                         'y' => isset($arr_entites[$rt->id()]['y']) ? $arr_entites[$rt->id()]['y'] : 0,
                         'id_entite' => $arr_entites[$rt->id()]['id_entite'],
+                        'nbItem' => $rt->itemCount(),
                         'cols' => $cols
                     ];
                 }
@@ -231,16 +233,16 @@ class cmap extends AbstractHelper
 
     function getGeoInfo($oItem, $result){
         $rc = $oItem->displayResourceClassLabel() ;
-
+        //$structuralClass = $oItem->value('schema:structuralClass')->__toString();
         $id_res = 0;
 
         $resource_templates = $this->api->search('resource_templates')->getContent();
         foreach ($resource_templates as $key=>$rt) {
             $pros = $rt->resourceClass();
-
             if ($pros != null) {
                 if ($pros->id() == $oItem->resourceClass()->id()) {
                     $id_res = $rt->id();
+                    $nbItems = $rt->itemCount();
                 }
             }
         }
@@ -251,6 +253,7 @@ class cmap extends AbstractHelper
             ,'idResource'=>$id_res
             ,'x'=>(float)$oItem->value('geom:coordX')->__toString()
             ,'y'=>(float)$oItem->value('geom:coordY')->__toString()
+            ,'schema:numberOfItems'=>$nbItems
         ];
 
         return $result;

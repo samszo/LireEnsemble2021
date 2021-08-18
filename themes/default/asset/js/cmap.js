@@ -12,11 +12,15 @@ class cmap {
             .attr('width',me.width)
             .attr('height',me.height)
 
-        let colsHeight = 20;//Hauteur du champ
-        let tableTitleHeight = 25;//Hauteur du champ
-        let tableFootHeight = 25;//Hauteur du champ
-        let colsWidth = 130;
-        let offLine = 20;//Décalage de nœud
+        let colsHeight = 20//Hauteur du champ
+        , tableTitleHeight = 25//Hauteur du champ
+        , tableFootHeight = 25//Hauteur du champ
+        , colsWidth = 130
+        , offLine = 20//Décalage de nœud
+        , colorTitleEntities = d3.scaleSequential()
+            .domain([0,10])
+            .interpolator(d3.interpolate("white", "red"));
+                  
 
         let btnText = {
             leftOpen:'',//'Extension de champ',
@@ -45,6 +49,8 @@ class cmap {
             //initialisation
             let g, gPosition;
 
+            colorTitleEntities.domain([0,d3.max(me.tables.map(t=>t.nbItem))]);            
+            
             initSVG()
             //Première exécution
             function initSVG(){
@@ -257,7 +263,7 @@ class cmap {
                     .attr('width',function(d){
                         return colsWidth
                     })
-                    .attr('fill','#FBE17E')
+                    .attr('fill',d=>colorTitleEntities(d.nbItem))
                     .style('cursor','pointer')
                 // .attr("transform", "translate(" + 0 + ", " + 10 + ")")
                 tTitle.append('text')
