@@ -27,6 +27,7 @@ class cmap {
             .domain([0,10])
             .interpolator(d3.interpolate("white", "blue"));
 
+
         let btnText = {
             leftOpen:'',//'Extension de champ',
             leftClose:'',//'Réduire le champ',
@@ -57,6 +58,7 @@ class cmap {
             colorTitleEntities.domain([0,d3.max(me.tables.map(t=>t.nbItem))]);
             colorProprietes.domain([0,me.tables[0].maxItemPro]);
             colorLinks.domain([0,me.tables[0].maxLinkPro]);
+
             
             initSVG()
             //Première exécution

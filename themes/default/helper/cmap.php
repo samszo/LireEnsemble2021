@@ -86,6 +86,7 @@ class cmap extends AbstractHelper
 
                 }
                 $str_pro = strlen($rt->label()) > 17 ? substr($rt->label(), 0, 17) . "..." : $rt->label();
+
                 $tables[] = [
                     'tableName' => ucfirst($str_pro),
                     'id' => $rt->id(),
@@ -209,6 +210,7 @@ class cmap extends AbstractHelper
         return $result;
     }
 
+
     function getGeoInfo($oItem){
         //$rc = $oItem->displayResourceClassLabel() ;
         $id_res = 0;
@@ -219,10 +221,12 @@ class cmap extends AbstractHelper
             if ($pros != null) {
                 if ($pros->term() == $oItem->value('schema:structuralClass')->asHtml()) {
                     $id_res = $rt->id();
+
                     $this->resource_templates[] = $rt;
                 }
             }
         }
+
 
         $this->arr_entites[$id_res]['x'] = (float)$oItem->value('geom:coordX')->__toString();
         $this->arr_entites[$id_res]['y'] = (float)$oItem->value('geom:coordY')->__toString();
