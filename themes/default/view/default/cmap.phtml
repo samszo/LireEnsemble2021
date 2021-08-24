@@ -4,14 +4,40 @@ $user = $this->identity();
 ?>
 
 <script>
+    // Wait for window load
+    $(window).load(function() {
+        // Animate loader off screen
+        $(".se-pre-con").fadeOut("slow");
+    });
+
     let tables =  <?php echo json_encode($cmap['tables']); ?>
 
     let links = <?php echo json_encode($cmap['links']); ?>
 
     let site_url = "<?php echo $site->url(); ?>"
 
+    function click_lst(v_carte){
+        document.getElementById("cartes").value = v_carte;
+        document.getElementById('frm_sel').submit();
+        return false;
+    }
+
 </script>
 <style>
+    /* This only works with JavaScript,
+    if it's not present, don't show loader */
+    .no-js #loader { display: none;  }
+    .js #loader { display: block; position: absolute; left: 100px; top: 0; }
+    .se-pre-con {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: url("/themes/default/img/loading.gif") center no-repeat #fff;
+    }
+
     .table-foot-btn{
         fill:blue;
         font-size: 12px;
@@ -73,10 +99,18 @@ $user = $this->identity();
         } else {
             var checkboxes = document.getElementsByName("chk_class[]");
             var numberOfCheckedItems = 0;
+            var str_pos_sel = "";
             for (var i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].checked)
+                if (checkboxes[i].checked) {
                     numberOfCheckedItems++;
+                    if (str_pos_sel !== "") {
+                        str_pos_sel += ",";
+                    }
+                    str_pos_sel += i;
+                }
             }
+            document.getElementById("pos_sel").value = str_pos_sel;
+
             if (numberOfCheckedItems == 0) {
                 alert("Veuillez choisir au moins 1 class");
                 return false;
@@ -94,25 +128,29 @@ $user = $this->identity();
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <form action="" method="post" id="frm_sel">
-                        <select name="cartes" id="cartes" onchange="javascript:frm_sel.submit()">
-                            <option value="0">Carte des entités</option>
-                            <?php
-                            foreach ($cmap['lst_item_set'] as $id_i_s=>$title) {
-                                ?>
-                                <option value="<?= $id_i_s ?>" <?= $cmap['sel_carte'] == $id_i_s ? "selected" : "" ?> class="dropdown-item"><?= $title ?></option>
-                                <?php
-                            }
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Carte des entités
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <form action="" method="post" id="frm_sel">
+                        <?php
+                        foreach ($cmap['lst_item_set'] as $id_i_s=>$title) {
                             ?>
-                        </select>
-                    </form>
+                            <li><a class="dropdown-item <?= $cmap['sel_carte'] == $id_i_s ? "active" : "" ?>" href="#" onclick="click_lst(<?= $id_i_s ?>)"><?= $title ?></a></li>
+                        <?php
+                        }
+                        ?>
+                            <input type="hidden" name="cartes" id="cartes">
+                        </form>
+                    </ul>
                 </li>
                 <li class="nav-item" id="toImg">
-                    <a class="nav-link" href="#" onclick="c.toImg()">toImg</a>
+                    <button class="btn btn-outline-success" onclick="c.toImg()">toImg</button>
                 </li>
                 <li class="nav-item" id="toSvg">
-                    <a class="nav-link" href="#" onclick="c.downloadSVG()">toSvg</a>
+                    &nbsp;
+                    <button class="btn btn-outline-success" onclick="c.downloadSVG()">toSvg</button>
                 </li>
             </ul>
             <?php
@@ -138,27 +176,28 @@ $user = $this->identity();
     <div style="border:1px dashed #000;background-color: #F8F8F9; padding: 20px;">
     <form action="" method="post" id="frm_add" onsubmit="return checkSelected();">
         <div class="form-group row">
-            <label for="inputName" class="col-sm-2 col-form-label">Nom carte (*)</label>
+            <label for="inputName" class="col-sm-2 col-form-label">Nom carte <font color="#920b0b">*</font></label>
             <div class="col-sm-10">
                 <input type="text" class="form-control"  name="name_carte" id="name_carte" placeholder="Nom carte">
             </div>
         </div>
         <fieldset class="form-group">
             <div class="row">
-                <div class="col-sm-2">Les classes (*)</div>
+                <div class="col-sm-2">Les classes <font color="#920b0b">*</font></div>
                 <div class="col-sm-10">
                     <div class="row">
                     <div class="col-sm-4">
                     <?php
                     $i = 1;
-                    foreach ($cmap['chk_classes'] as $id=>$class) {
+                    foreach ($cmap['chk_classes'] as $obj_class) {
                     ?>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="gridCheck1" name="chk_class[]" class="clonecheckbox" value="<?= $id . ':' . $class ?>">
+                            <input class="form-check-input" type="checkbox" id="gridCheck1" name="chk_class[]" class="clonecheckbox" value="<?= $obj_class['label'] ?>">
                             <label class="form-check-label" for="gridCheck1">
-                                <?= $class ?>
+                                <?= $obj_class['label'] ?>
                             </label>
                         </div>
+                        <input type="hidden" name="term_class[]" value="<?= $obj_class['term'] ?>">
                     <?php
                         if ($i%3 == 0) {
                             print '</div><div class="col-sm-4">';
@@ -167,6 +206,7 @@ $user = $this->identity();
                         $i++;
                     }
                     ?>
+                        <input type="hidden" name="pos_sel" id="pos_sel" value="">
                     </div>
                     </div>
                 </div>
@@ -176,7 +216,9 @@ $user = $this->identity();
             <div class="col-sm-10" style="text-align: center;">
                 <button type="submit" class="btn btn-primary">Sauvegarder</button>
                 &nbsp;&nbsp;&nbsp;
-                <input type="button" class="btn but_cancel" onclick="location.reload()" value="Annuler"/>
+                <a href="<?php echo $site->url(); ?>/page/cmap">
+                    <input type="button" class="btn but_cancel" value="Annuler"/>
+                </a>
             </div>
         </div>
     </form>
@@ -200,6 +242,8 @@ $user = $this->identity();
         </div>
     </div>
 </div>
+
+<div class="se-pre-con"></div>
 
 <script>
     var c = new cmap({'width':1400,'height':800,'tables':tables, 'links':links, 'site_url':site_url})

@@ -8,12 +8,17 @@ class cmap extends AbstractHelper
     var $api;
     //pour éviter de faire plusieurs fois le traitement
     var $proLinks;
-    //prendre default 'collection map' dans collection
+    //prendre default 'Entiteé relation' dans collection
     var $default_collection = 152;
     //vocabulary: Tibor & BnF
     var $default_vocabulary_id = 7;
     //default carte afficher
     var $default_carte;
+    var $arr_entites;
+    var $arr_id_rs;
+    var $resource_templates;
+    var $keyTemp;
+    var $arr_c_l_p;
 
     /**
      * Get resosurce templates
@@ -26,11 +31,6 @@ class cmap extends AbstractHelper
     public function __invoke($type)
     {
         $this->api = $this->getView()->api();
-        $this->proLinks = array();
-
-        $result_carte = array();
-        $lst_item_set = array();
-        $params = array();
 
         // creer new carte
         if (isset($_POST['name_carte'])) {
@@ -38,30 +38,19 @@ class cmap extends AbstractHelper
         }
 
         // prendre liste de cartes: "Collection"
-        $query_items_set = [
-            'item_set_id'=>$this->default_collection, // collection cmap
+        $lst_item_set = $this->list_cartes();
+
+        $params = isset($_POST['cartes']) ? $_POST['cartes'] : $this->default_carte; // default carte fin
+
+        // prendre donnee de carte: "Contenu"
+        $query = [
+            'id' => $params,
         ];
-        $items_set = $this->api->search('items',$query_items_set,['limit'=>0])->getContent();
-        if (count($items_set) > 0) {
-            foreach ($items_set as $i_s) {
-                // couper nom si long
-                $str_nom = $i_s->title();
-                if (strlen($str_nom) > 30) {
-                    $str_nom = substr($str_nom, 0, 30) . '...';
-                }
-                $lst_item_set[$i_s->id()] = $str_nom;
-                $this->default_carte = $i_s->id();
-            }
-            asort($lst_item_set);
+        $items = $this->api->search('items', $query, ['limit' => 0])->getContent();
 
-            $params = isset($_POST['cartes']) ? $_POST['cartes'] : $this->default_carte; // default carte fin
-
-            // prendre donnee de carte: "Contenu"
-            $query = [
-                'id' => $params,
-            ];
-            $items = $this->api->search('items', $query, ['limit' => 0])->getContent();
-
+        $result_carte = array();
+        $this->resource_templates = array();
+        if (count($items) > 0) {
             foreach ($items as $i) {
                 $result_carte[] = $this->getCarteInfo($i);
             }
@@ -69,68 +58,57 @@ class cmap extends AbstractHelper
 
         $tables = array();
         $links = array();
+        $this->keyTemp = array();
+        $this->arr_c_l_p = array();
+        $arr_c_i_p = array();
 
-        $arr_entites = array();
-        $arr_id_rs = array();
         if (count($result_carte) > 0) {
-            foreach ($result_carte[0]['nodes'] as $entites) {
-                $arr_entites[$entites['idResource']]['x'] = $entites['x'];
-                $arr_entites[$entites['idResource']]['y'] = $entites['y'];
-                $arr_entites[$entites['idResource']]['id_entite'] = $entites['id'];
-                $arr_id_rs[] = $entites['idResource'];
-            }
-
-            $query_rs = [
-                'id' => $arr_id_rs,
-            ];
-            $resource_templates = $this->api->search('resource_templates', $query_rs, ['limit' => 0])->getContent();
-
-            foreach ($resource_templates as $key => $rt) {
+            foreach ($this->resource_templates as $key=>$rt) {
                 //récupère les propriétés
                 $pros = $rt->resourceTemplateProperties();
                 $cols = array();
                 foreach ($pros as $pro) {
                     $p = $pro->property();
+
+                    // somme de pro
+                    $i_p = $this->getView()->EntityRelationFactory('getProItem', $p->id());
+                    $c_i_p = $i_p->getTotalResults();
+                    $arr_c_i_p[] = $c_i_p;
+
                     $str_title = strlen($p->label()) > 17 ? substr($p->label(), 0, 17) . "..." : $p->label();
                     $cols[] = [
                         'itemName' => ucfirst($str_title)
                         , 'id' => $p->id()
                         , 'id_rt' => $rt->id()
                         , 'links' => $this->getPropertyLinks($p)
+                        , 'nbItemPro' => $c_i_p
                     ];
+
                 }
                 $str_pro = strlen($rt->label()) > 17 ? substr($rt->label(), 0, 17) . "..." : $rt->label();
-                if (!isset($arr_entites[$rt->id()]['x']) || !isset($arr_entites[$rt->id()]['y'])) {
-                    $tables[] = [
-                        'tableName' => ucfirst($str_pro),
-                        'id' => $rt->id(),
-                        'id_entite' => $arr_entites[$rt->id()]['id_entite'],
-                        'cols' => $cols
-                    ];
-                } else {
-                    $tables[] = [
-                        'tableName' => ucfirst($str_pro),
-                        'id' => $rt->id(),
-                        'x' => isset($arr_entites[$rt->id()]['x']) ? $arr_entites[$rt->id()]['x'] : 0,
-                        'y' => isset($arr_entites[$rt->id()]['y']) ? $arr_entites[$rt->id()]['y'] : 0,
-                        'id_entite' => $arr_entites[$rt->id()]['id_entite'],
-                        'cols' => $cols
-                    ];
-                }
+                $tables[] = [
+                    'tableName' => ucfirst($str_pro),
+                    'id' => $rt->id(),
+                    'x' => isset($this->arr_entites[$rt->id()]['x']) ? $this->arr_entites[$rt->id()]['x'] : 0,
+                    'y' => isset($this->arr_entites[$rt->id()]['y']) ? $this->arr_entites[$rt->id()]['y'] : 0,
+                    'id_entite' => isset($this->arr_entites[$rt->id()]['id_entite']) ? $this->arr_entites[$rt->id()]['id_entite'] : 0,
+                    'nbItem' => $rt->itemCount(),
+                    'cols' => $cols
+                ];
+
+                $this->keyTemp[$rt->id()]['key'] = $key;
             }
 
-            $keyTemp = [];
-            foreach ($tables as $key => $t) {
-                $keyTemp[$t['id']]['key'] = $key;
-                $keyTemp[$t['id']]['name'] = $t['tableName'];
-            }
+            $tables[0]['maxItemPro'] = max($arr_c_i_p);
+            $tables[0]['maxLinkPro'] = max($this->arr_c_l_p);
+
             //consruction de la table des liens
-            foreach ($tables as $key => $t) {
+            foreach ($tables as $t) {
                 foreach ($t['cols'] as $i => $c) {
                     foreach ($c['links'] as $l) {
                         $links[] = [
-                            "source" => isset($keyTemp[$t['id']]['key']) ? $keyTemp[$t['id']]['key'] : 0,
-                            "target" => isset($keyTemp[$l['id']]['key']) ? $keyTemp[$l['id']]['key'] : 0,
+                            "source" => isset($this->keyTemp[$t['id']]['key']) ? $this->keyTemp[$t['id']]['key'] : 0,
+                            "target" => isset($this->keyTemp[$l['id']]['key']) ? $this->keyTemp[$l['id']]['key'] : 0,
                             "relation" => 'line1',
                             "sourceIndex" => $i + 1,
                             "targetIndex" => 1,
@@ -161,11 +139,12 @@ class cmap extends AbstractHelper
     function getListClasses() {
         // prendre liste de class: "Vocabulary = 7"
         $query_classes = [
-            'vocabulary_id' => $this->default_vocabulary_id, // collection cmap
+            'vocabulary_id' => $this->default_vocabulary_id, // Entite relation
         ];
         $data_classes = $this->api->search('resource_classes',$query_classes,['limit'=>0])->getContent();
-        foreach ($data_classes as $classes) {
-            $chk_classes[$classes->id()] = $classes->label();
+        foreach ($data_classes as $key=>$classes) {
+            $chk_classes[$key]['label'] = $classes->label();
+            $chk_classes[$key]['term'] = $classes->term();
         }
         asort($chk_classes);
         return $chk_classes;
@@ -180,8 +159,9 @@ class cmap extends AbstractHelper
 
     function getPropertyLinks($p)
     {
-        if(isset($this->proLinks[$p->id()]))
-	    return $this->proLinks[$p->id()];
+        if(isset($this->proLinks[$p->id()])) {
+            return $this->proLinks[$p->id()];
+        }
         $rt = array();
 
         //recherche les ressources associés à cette propriété
@@ -192,18 +172,19 @@ class cmap extends AbstractHelper
         foreach ($items as $item) {
             //récupère les valeurs qui sont des ressources
             $values = $item->value($p->term(),['all'=>true,'type'=>'resource']);
+
             foreach ($values as $v) {
                 //récupère le ressource template associé à la ressource
                 if($v->valueResource()->resourceTemplate()){
                     if(isset($rt[$v->valueResource()->resourceTemplate()->id()]))
-                        $rt[$v->valueResource()->resourceTemplate()->id()]['nb'] ++;
+                        $this->arr_c_l_p[] = $rt[$v->valueResource()->resourceTemplate()->id()]['nb'] ++;
                     else{
                         $rt[$v->valueResource()->resourceTemplate()->id()]=[
                             'id'=>$v->valueResource()->resourceTemplate()->id()
                             ,'label'=>$v->valueResource()->resourceTemplate()->label()
                             ,'nb'=>1
                         ];
-
+                        $this->arr_c_l_p[] = $rt[$v->valueResource()->resourceTemplate()->id()]['nb'];
                     }
                 }
             }
@@ -211,49 +192,42 @@ class cmap extends AbstractHelper
         $this->proLinks[$p->id()]=$rt;
 
         return $rt;
-      
     }
 
     function getCarteInfo($oItem){
         $title = $oItem->value('dcterms:title')->asHtml();
-        $desc = $oItem->value('dcterms:description')->asHtml();
+        $desc = $oItem->value('dcterms:description') !== null ? $oItem->value('dcterms:description')->asHtml() : '';
         $result = [
             'title'=>$title
             ,'desc'=>$desc
         ];
         $geos = $oItem->value('geom:geometry', ['all' => true]);
         foreach ($geos as $geo) {
-            $result = $this->getGeoInfo($geo->valueResource(),$result);
+            $this->getGeoInfo($geo->valueResource());
         }
 
         return $result;
     }
 
-    function getGeoInfo($oItem, $result){
-        $rc = $oItem->displayResourceClassLabel() ;
-
+    function getGeoInfo($oItem){
+        //$rc = $oItem->displayResourceClassLabel() ;
         $id_res = 0;
 
         $resource_templates = $this->api->search('resource_templates')->getContent();
-        foreach ($resource_templates as $key=>$rt) {
+        foreach ($resource_templates as $rt) {
             $pros = $rt->resourceClass();
-
             if ($pros != null) {
-                if ($pros->id() == $oItem->resourceClass()->id()) {
+                if ($pros->term() == $oItem->value('schema:structuralClass')->asHtml()) {
                     $id_res = $rt->id();
+                    $this->resource_templates[] = $rt;
                 }
             }
         }
 
-        $result['nodes'][] = [
-            'label'=>$oItem->value('dcterms:title')->asHtml()
-            ,'id'=>$oItem->id()
-            ,'idResource'=>$id_res
-            ,'x'=>(float)$oItem->value('geom:coordX')->__toString()
-            ,'y'=>(float)$oItem->value('geom:coordY')->__toString()
-        ];
-
-        return $result;
+        $this->arr_entites[$id_res]['x'] = (float)$oItem->value('geom:coordX')->__toString();
+        $this->arr_entites[$id_res]['y'] = (float)$oItem->value('geom:coordY')->__toString();
+        $this->arr_entites[$id_res]['id_entite'] = $oItem->id();
+        $this->arr_id_rs[] = $id_res;
     }
 
     /**
@@ -266,13 +240,42 @@ class cmap extends AbstractHelper
         $params['name_carte'] = $_POST['name_carte'];
         $params['default_collection'] = $this->default_collection;
         $action = 'addPosition';
-        $params['chk_class'] = [];
-        foreach ($_POST['chk_class'] as $str_class) {
-            $arr_class = explode(":", $str_class);
-            $params['chk_class'][$arr_class[0]] = $arr_class[1];
+        $params['chk_class'] = array();
+        $arr_pos_sel = explode(",", $_POST['pos_sel']);
+
+        foreach ($_POST['chk_class'] as $key=>$label_class) {
+            $params['chk_class'][$key]['label'] = $label_class;
+            $params['chk_class'][$key]['term'] = $_POST['term_class'][$arr_pos_sel[$key]];
         }
 
         $this->getView()->EntityRelationFactory($action, $params);
+    }
+
+    /**
+     * prendre liste de cartes
+     * @param
+     * @return array
+     */
+
+    function list_cartes() {
+        $lst_item_set = [];
+        $query_items_set = [
+            'item_set_id'=>$this->default_collection, // Entite relation
+        ];
+        $items_set = $this->api->search('items',$query_items_set,['limit'=>0])->getContent();
+        if (count($items_set) > 0) {
+            foreach ($items_set as $i_s) {
+                // couper nom si long
+                $str_nom = $i_s->title();
+                if (strlen($str_nom) > 30) {
+                    $str_nom = substr($str_nom, 0, 30) . '...';
+                }
+                $lst_item_set[$i_s->id()] = $str_nom;
+                $this->default_carte = $i_s->id();
+            }
+            asort($lst_item_set);
+        }
+        return $lst_item_set;
     }
 
 }

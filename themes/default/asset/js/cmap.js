@@ -12,11 +12,20 @@ class cmap {
             .attr('width',me.width)
             .attr('height',me.height)
 
-        let colsHeight = 20;//Hauteur du champ
-        let tableTitleHeight = 25;//Hauteur du champ
-        let tableFootHeight = 25;//Hauteur du champ
-        let colsWidth = 130;
-        let offLine = 20;//Décalage de nœud
+        let colsHeight = 20//Hauteur du champ
+        , tableTitleHeight = 25//Hauteur du champ
+        , tableFootHeight = 25//Hauteur du champ
+        , colsWidth = 130
+        , offLine = 20//Décalage de nœud
+        , colorTitleEntities = d3.scaleSequential()
+            .domain([0,10])
+            .interpolator(d3.interpolate("white", "red"))
+        , colorProprietes = d3.scaleSequential()
+            .domain([0,10])
+            .interpolator(d3.interpolate("white", "orange"))
+        , colorLinks = d3.scaleSequential()
+            .domain([0,10])
+            .interpolator(d3.interpolate("white", "blue"));
 
         let btnText = {
             leftOpen:'',//'Extension de champ',
@@ -45,6 +54,10 @@ class cmap {
             //initialisation
             let g, gPosition;
 
+            colorTitleEntities.domain([0,d3.max(me.tables.map(t=>t.nbItem))]);
+            colorProprietes.domain([0,me.tables[0].maxItemPro]);
+            colorLinks.domain([0,me.tables[0].maxLinkPro]);
+            
             initSVG()
             //Première exécution
             function initSVG(){
@@ -189,9 +202,8 @@ class cmap {
                     .data(me.links)
                     .enter()
                     .append("polyline")
-                    //.append("line")
                     .attr("fill",'none')
-                    .attr("stroke",'#000')
+                    .attr("stroke", d=>colorLinks(d.nb))
                     .attr("stroke-width",1)
                     .attr('class','link-polyline')
                     .attr("x1", function(l) {
@@ -257,8 +269,9 @@ class cmap {
                     .attr('width',function(d){
                         return colsWidth
                     })
-                    .attr('fill','#FBE17E')
+                    .attr('fill',d=>colorTitleEntities(d.nbItem))
                     .style('cursor','pointer')
+                    .on('click',listItem)
                 // .attr("transform", "translate(" + 0 + ", " + 10 + ")")
                 tTitle.append('text')
                     .text(function(d){
@@ -295,11 +308,9 @@ class cmap {
                     });
                     str_content += "</table>";
 
-                    $('#postModal h5#postModalLabel').text(parsed.length + (parsed.length > 1 ? ' items' : ' item') + ' de la classe: ' + d.tableName);// title
-                    $('#postModal .modal-body').html(str_content); // content
+                    var str_title = parsed.length + (parsed.length > 1 ? ' items' : ' item') + ' de la classe: ' + d.tableName;
 
-                    var postModal = new bootstrap.Modal(document.getElementById('postModal'));
-                    postModal.show();
+                    me.show_model(str_title, str_content);
                 })
                 .fail(function(e) {
                     //console.log("error = "+JSON.stringify(e))
@@ -363,7 +374,10 @@ class cmap {
                     .attr('width',function(d){
                         return colsWidth
                     })
-                    .attr('fill','#C5D2E7')
+                    .attr('fill',d=>colorProprietes(d.nbItemPro))
+                    .style('cursor','pointer')
+                    .on('click',valeurPro)
+
                 addColsGsData.append('text')
                     .attr('class','svg-text')
                     .text(function(d){
@@ -407,12 +421,9 @@ class cmap {
                     });
                     str_content += "</table>";
 
-                    $('#postModal h5#postModalLabel').text(parsed.length + (parsed.length > 1 ? ' valeurs' : ' valeur') + ' de propriétés: ' + d.itemName);// title
-                    $('#postModal .modal-body').html(str_content); // content
+                    var str_title = parsed.length + (parsed.length > 1 ? ' valeurs' : ' valeur') + ' de propriétés: ' + d.itemName;
 
-                    var postModal = new bootstrap.Modal(document.getElementById('postModal'));
-                    postModal.show();
-
+                    me.show_model(str_title, str_content);
                 })
                 .fail(function(e) {
                     //console.log("error = "+JSON.stringify(e))
@@ -427,8 +438,7 @@ class cmap {
                     .select('rect')
                     .transition()
                     // .delay(50)
-                    .attr('fill',isEnter ? colsStyle.fillLight : colsStyle.fillDefalt)
-
+                    .attr('fill',isEnter ? colsStyle.fillLight : d=>colorProprietes(d.nbItemPro))
             }
             //Surbrillance de la ligne
             function lineLight(data,isEnter){
@@ -438,9 +448,9 @@ class cmap {
                         let source = me.tables[d.source].cols[d.sourceIndex-1]
                         let target = me.tables[d.target].cols[d.targetIndex-1]
                         if(data.id === source.id || data.id === target.id ){
-                            return isEnter ? lineStyle.strokeLight : lineStyle.strokeDefault
+                            return isEnter ? lineStyle.strokeLight : colorLinks(d.nb)
                         }else{
-                            return lineStyle.strokeDefault
+                            return colorLinks(d.nb)
                         }
                     })
                     .attr('stroke-width',function(d){
@@ -614,10 +624,10 @@ class cmap {
                 }
             })
                 .done(function(data) {
-                    $('#postModal .modal-body').html("Enregistrer les données avec succès"); // content
+                    var str_title = 'Notification';
+                    var str_content = "Enregistrer les données avec succès";
 
-                    var postModal = new bootstrap.Modal(document.getElementById('postModal'));
-                    postModal.show();
+                    me.show_model(str_title, str_content);
                 })
                 .fail(function(e) {
                     //console.log("error = "+JSON.stringify(e))
@@ -625,8 +635,16 @@ class cmap {
                 });
         }
 
-        this.func_arr_pos = function func_arr_pos(arr){
+        this.func_arr_pos = function func_arr_pos(arr) {
             me.arr_pos = arr
+        }
+
+        this.show_model = function show_model(title, content) {
+            $('#postModal h5#postModalLabel').text(title);// title
+            $('#postModal .modal-body').html(content); // content
+
+            var postModal = new bootstrap.Modal(document.getElementById('postModal'));
+            postModal.show();
         }
 
     }
