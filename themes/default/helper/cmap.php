@@ -18,7 +18,6 @@ class cmap extends AbstractHelper
     var $arr_id_rs;
     var $resource_templates;
     var $keyTemp;
-    var $arr_c_l_p;
 
     /**
      * Get resosurce templates
@@ -31,6 +30,8 @@ class cmap extends AbstractHelper
     public function __invoke($type)
     {
         $this->api = $this->getView()->api();
+
+        $_SESSION['pro_value'] = [];
 
         // creer new carte
         if (isset($_POST['name_carte'])) {
@@ -59,21 +60,18 @@ class cmap extends AbstractHelper
         $tables = array();
         $links = array();
         $this->keyTemp = array();
-        $this->arr_c_l_p = array();
-        $arr_c_i_p = array();
 
         if (count($result_carte) > 0) {
             foreach ($this->resource_templates as $key=>$rt) {
                 //récupère les propriétés
                 $pros = $rt->resourceTemplateProperties();
                 $cols = array();
+
                 foreach ($pros as $pro) {
                     $p = $pro->property();
 
                     // somme de pro
-                    $i_p = $this->getView()->EntityRelationFactory('getProItem', $p->id());
-                    $c_i_p = $i_p->getTotalResults();
-                    $arr_c_i_p[] = $c_i_p;
+                    $arr_v_p = $this->getView()->EntityRelationFactory('getProItem', $p);
 
                     $str_title = strlen($p->label()) > 17 ? substr($p->label(), 0, 17) . "..." : $p->label();
                     $cols[] = [
@@ -81,7 +79,7 @@ class cmap extends AbstractHelper
                         , 'id' => $p->id()
                         , 'id_rt' => $rt->id()
                         , 'links' => $this->getPropertyLinks($p)
-                        , 'nbItemPro' => $c_i_p
+                        , 'nbItemPro' => count($arr_v_p)
                     ];
 
                 }
@@ -93,14 +91,11 @@ class cmap extends AbstractHelper
                     'y' => isset($this->arr_entites[$rt->id()]['y']) ? $this->arr_entites[$rt->id()]['y'] : 0,
                     'id_entite' => isset($this->arr_entites[$rt->id()]['id_entite']) ? $this->arr_entites[$rt->id()]['id_entite'] : 0,
                     'nbItem' => $rt->itemCount(),
-                    'cols' => $cols
+                    'cols' => $cols,
                 ];
 
                 $this->keyTemp[$rt->id()]['key'] = $key;
             }
-
-            $tables[0]['maxItemPro'] = max($arr_c_i_p);
-            $tables[0]['maxLinkPro'] = max($this->arr_c_l_p);
 
             //consruction de la table des liens
             foreach ($tables as $t) {
@@ -177,14 +172,14 @@ class cmap extends AbstractHelper
                 //récupère le ressource template associé à la ressource
                 if($v->valueResource()->resourceTemplate()){
                     if(isset($rt[$v->valueResource()->resourceTemplate()->id()]))
-                        $this->arr_c_l_p[] = $rt[$v->valueResource()->resourceTemplate()->id()]['nb'] ++;
+                        $rt[$v->valueResource()->resourceTemplate()->id()]['nb'] ++;
                     else{
                         $rt[$v->valueResource()->resourceTemplate()->id()]=[
                             'id'=>$v->valueResource()->resourceTemplate()->id()
                             ,'label'=>$v->valueResource()->resourceTemplate()->label()
                             ,'nb'=>1
                         ];
-                        $this->arr_c_l_p[] = $rt[$v->valueResource()->resourceTemplate()->id()]['nb'];
+                        $rt[$v->valueResource()->resourceTemplate()->id()]['nb'];
                     }
                 }
             }

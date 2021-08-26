@@ -55,8 +55,8 @@ class cmap {
             let g, gPosition;
 
             colorTitleEntities.domain([0,d3.max(me.tables.map(t=>t.nbItem))]);
-            colorProprietes.domain([0,me.tables[0].maxItemPro]);
-            colorLinks.domain([0,me.tables[0].maxLinkPro]);
+            colorProprietes.domain([0,d3.max(me.tables.map(t=>d3.max(t.cols.map(t1=>t1.nbItemPro))))]);
+            colorLinks.domain([0,d3.max(me.links.map(t=>t.nb))]);
             
             initSVG()
             //Première exécution
@@ -298,9 +298,16 @@ class cmap {
                     data: {
                         'itemSet': d.id,
                         'action': 'listItem'
+                    },
+                    beforeSend: function(){
+                        // afficher loading
+                        $(".se-pre-con").show();
                     }
                 })
                 .done(function(data) {
+                    // Cacher loading
+                    $(".se-pre-con").hide();
+
                     var parsed = JSON.parse(data.success);
                     var str_content = "<table>";
                     $.each(parsed, function (key, val) {
@@ -411,9 +418,16 @@ class cmap {
                     data: {
                         'itemSet': [d.id_rt, d.id], // id resource template, id propriété
                         'action': 'valeurPro'
+                    },
+                    beforeSend: function(){
+                        // afficher loading
+                        $(".se-pre-con").show();
                     }
                 })
                 .done(function(data) {
+                    // Cacher loading
+                    $(".se-pre-con").hide();
+
                     var parsed = JSON.parse(data.success);
                     var str_content = "<table>";
                     $.each(parsed, function (key, val) {
