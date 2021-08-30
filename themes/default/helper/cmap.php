@@ -18,6 +18,7 @@ class cmap extends AbstractHelper
     var $arr_id_rs;
     var $resource_templates;
     var $keyTemp;
+    var $arr_pos_rs;
 
     /**
      * Get resosurce templates
@@ -52,9 +53,7 @@ class cmap extends AbstractHelper
         $result_carte = array();
         $this->resource_templates = array();
         if (count($items) > 0) {
-            foreach ($items as $i) {
-                $result_carte[] = $this->getCarteInfo($i);
-            }
+            $result_carte = $this->getCarteInfo($items[0]);
         }
 
         $tables = array();
@@ -62,19 +61,32 @@ class cmap extends AbstractHelper
         $this->keyTemp = array();
 
         if (count($result_carte) > 0) {
+
+            $arr_nb_items = array();
+            $arr_nb_pros = array();
+            $arr_nb_links = array();
+
             foreach ($this->resource_templates as $key=>$rt) {
+                $this->keyTemp[$rt->id()]['key'] = $key;
+
                 //récupère les propriétés
                 $pros = $rt->resourceTemplateProperties();
                 $cols = array();
+                $var = array();
+                $i_col = 0;
 
                 foreach ($pros as $pro) {
                     $p = $pro->property();
 
                     // somme de pro
-                    $arr_v_p = $this->getView()->EntityRelationFactory('getProItem', $p);
+                    $var['p'] = $p;
+                    $var['id_rt'] = $rt->id();
+                    $arr_v_p = $this->getView()->EntityRelationFactory('getProItem', $var);
+
+                    $arr_nb_pros[] = count($arr_v_p);
 
                     $str_title = strlen($p->label()) > 17 ? substr($p->label(), 0, 17) . "..." : $p->label();
-                    $cols[] = [
+                    $cols[$i_col] = [
                         'itemName' => ucfirst($str_title)
                         , 'id' => $p->id()
                         , 'id_rt' => $rt->id()
@@ -82,6 +94,26 @@ class cmap extends AbstractHelper
                         , 'nbItemPro' => count($arr_v_p)
                     ];
 
+                    //consruction de la table des liens
+                    foreach ($cols[$i_col]['links'] as $l) {
+                        $pos_rt = array_search($rt->id(), $this->arr_pos_rs);
+                        $pos_l = array_search($l['id'], $this->arr_pos_rs);
+
+                        if ($pos_l !== false) {
+                            $links[] = [
+                                "source" => $pos_rt,
+                                "target" => $pos_l,
+                                "relation" => 'line1',
+                                "sourceIndex" => $i_col + 1,
+                                "targetIndex" => 1,
+                                "value" => 1,
+                                "nb" => $l['nb'],
+                            ];
+                            $arr_nb_links[] = $l['nb'];
+                        }
+                    }
+
+                    $i_col++;
                 }
                 $str_pro = strlen($rt->label()) > 17 ? substr($rt->label(), 0, 17) . "..." : $rt->label();
                 $tables[] = [
@@ -93,26 +125,11 @@ class cmap extends AbstractHelper
                     'nbItem' => $rt->itemCount(),
                     'cols' => $cols,
                 ];
-
-                $this->keyTemp[$rt->id()]['key'] = $key;
+                $arr_nb_items[] = $rt->itemCount();
             }
-
-            //consruction de la table des liens
-            foreach ($tables as $t) {
-                foreach ($t['cols'] as $i => $c) {
-                    foreach ($c['links'] as $l) {
-                        $links[] = [
-                            "source" => isset($this->keyTemp[$t['id']]['key']) ? $this->keyTemp[$t['id']]['key'] : 0,
-                            "target" => isset($this->keyTemp[$l['id']]['key']) ? $this->keyTemp[$l['id']]['key'] : 0,
-                            "relation" => 'line1',
-                            "sourceIndex" => $i + 1,
-                            "targetIndex" => 1,
-                            "value" => 1,
-                            "nb" => $l['nb'],
-                        ];
-                    }
-                }
-            }
+            $tables[0]['max_nb_items'] = count($arr_nb_items) > 0 ? max($arr_nb_items) : 0;
+            $tables[0]['max_nb_pros'] = count($arr_nb_pros) > 0 ? max($arr_nb_pros) : 0;
+            $tables[0]['max_nb_links'] = count($arr_nb_links) > 0 ? max($arr_nb_links) : 0;
         }
 
         return [
@@ -197,6 +214,8 @@ class cmap extends AbstractHelper
             ,'desc'=>$desc
         ];
         $geos = $oItem->value('geom:geometry', ['all' => true]);
+        $this->arr_pos_rs = [];
+
         foreach ($geos as $geo) {
             $this->getGeoInfo($geo->valueResource());
         }
@@ -209,12 +228,14 @@ class cmap extends AbstractHelper
         $id_res = 0;
 
         $resource_templates = $this->api->search('resource_templates')->getContent();
+
         foreach ($resource_templates as $rt) {
             $pros = $rt->resourceClass();
             if ($pros != null) {
                 if ($pros->term() == $oItem->value('schema:structuralClass')->asHtml()) {
                     $id_res = $rt->id();
                     $this->resource_templates[] = $rt;
+                    $this->arr_pos_rs[] = $rt->id();
                 }
             }
         }

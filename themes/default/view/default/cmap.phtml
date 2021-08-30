@@ -122,6 +122,13 @@ $path_img_loading = "/themes/default/img/loading.gif";
     }
 </script>
 
+<!-- colorimetrique --->
+<div style="text-align: right">
+    Entités: <svg id="seq1" width="80" height="20" ></svg> &nbsp;
+    Propriétés: <svg id="seq2" width="80" height="20" ></svg> &nbsp;
+    Relations: <svg id="seq3" width="80" height="20" ></svg> &nbsp;
+</div>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -248,4 +255,7 @@ $path_img_loading = "/themes/default/img/loading.gif";
 
 <script>
     var c = new cmap({'width':1400,'height':800,'tables':tables, 'links':links, 'site_url':site_url})
+    c.drawScale("seq1", d3.interpolateRgb('white', 'red'));
+    c.drawScale("seq2", d3.interpolateRgb('white', 'orange'));
+    c.drawScale("seq3", d3.interpolateRgb('brown', 'blue'));
 </script>

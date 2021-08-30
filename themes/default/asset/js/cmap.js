@@ -8,7 +8,7 @@ class cmap {
         this.site_url = params.site_url
         this.arr_pos = []
 
-        let svg = d3.select('svg')
+        let svg = d3.select('#svg')
             .attr('width',me.width)
             .attr('height',me.height)
 
@@ -18,14 +18,14 @@ class cmap {
         , colsWidth = 130
         , offLine = 20//Décalage de nœud
         , colorTitleEntities = d3.scaleSequential()
-            .domain([0,10])
+            .domain([0,9])
             .interpolator(d3.interpolate("white", "red"))
         , colorProprietes = d3.scaleSequential()
-            .domain([0,10])
+            .domain([0,9])
             .interpolator(d3.interpolate("white", "orange"))
         , colorLinks = d3.scaleSequential()
-            .domain([0,10])
-            .interpolator(d3.interpolate("white", "blue"));
+            .domain([0,9])
+            .interpolator(d3.interpolate("brown", "blue"));
 
         let btnText = {
             leftOpen:'',//'Extension de champ',
@@ -54,9 +54,9 @@ class cmap {
             //initialisation
             let g, gPosition;
 
-            colorTitleEntities.domain([0,d3.max(me.tables.map(t=>t.nbItem))]);
-            colorProprietes.domain([0,d3.max(me.tables.map(t=>d3.max(t.cols.map(t1=>t1.nbItemPro))))]);
-            colorLinks.domain([0,d3.max(me.links.map(t=>t.nb))]);
+            colorTitleEntities.domain([0,me.tables[0].max_nb_items]);
+            colorProprietes.domain([0,me.tables[0].max_nb_pros]);
+            colorLinks.domain([0,me.tables[0].max_nb_links]);
             
             initSVG()
             //Première exécution
@@ -294,7 +294,7 @@ class cmap {
                 $.ajax({
                     type: 'POST',
                     dataType: 'json',
-                    url: "../page/ajaxPos?json=1",
+                    url: me.site_url + "/page/ajaxPos?json=1",
                     data: {
                         'itemSet': d.id,
                         'action': 'listItem'
@@ -311,7 +311,7 @@ class cmap {
                     var parsed = JSON.parse(data.success);
                     var str_content = "<table>";
                     $.each(parsed, function (key, val) {
-                        str_content += "<tr><td><a href='" + me.site_url + "/item/" + val.id + "' target='_blank'>" + val.title + "</a></td></tr>";
+                        str_content += "<tr><td><a href='" + me.site_url + "/page/inf-item-pro?type=i&mnb=" + me.tables[0].max_nb_items + "&nb=" + parsed.length + "&id=" + val.id + "' target='_blank'>" + val.title + "</a></td></tr>";
                     });
                     str_content += "</table>";
 
@@ -414,7 +414,7 @@ class cmap {
                 $.ajax({
                     type: 'POST',
                     dataType: 'json',
-                    url: "../page/ajaxPos?json=1",
+                    url: me.site_url + "/page/ajaxPos?json=1",
                     data: {
                         'itemSet': [d.id_rt, d.id], // id resource template, id propriété
                         'action': 'valeurPro'
@@ -431,7 +431,7 @@ class cmap {
                     var parsed = JSON.parse(data.success);
                     var str_content = "<table>";
                     $.each(parsed, function (key, val) {
-                        str_content += "<tr><td><a href='" + me.site_url + "/item/" + val.id + "' target='_blank'>" + val.v_p + "</a></td></tr>";
+                        str_content += "<tr><td><a href='" + me.site_url + "/page/inf-item-pro?type=p&mnb=" + me.tables[0].max_nb_pros + "&nb=" + parsed.length + "&id=" + val.id + "' target='_blank'>" + val.v_p + "</a></td></tr>";
                     });
                     str_content += "</table>";
 
@@ -631,7 +631,7 @@ class cmap {
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
-                url: "../page/ajaxPos?json=1",
+                url: me.site_url + "/page/ajaxPos?json=1",
                 data: {
                     'itemSet': me.arr_pos,
                     'action': 'updatePosition'
@@ -654,12 +654,39 @@ class cmap {
         }
 
         this.show_model = function show_model(title, content) {
-            $('#postModal h5#postModalLabel').text(title);// title
-            $('#postModal .modal-body').html(content); // content
+            $('#postModal h5#postModalLabel').text(title);
+            $('#postModal .modal-body').html(content);
 
             var postModal = new bootstrap.Modal(document.getElementById('postModal'));
             postModal.show();
         }
 
+        this.drawScale = function drawScale(id, interpolator) {
+            var data = Array.from(Array(10).keys());
+
+            var cScale = d3.scaleSequential()
+                .interpolator(interpolator)
+                .domain([0,9]);
+
+            var xScale = d3.scaleLinear()
+                .domain([0,9])
+                .range([0, 80]);
+
+            var u = d3.select("#" + id)
+                .selectAll("rect")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("x", (d) => Math.floor(xScale(d)))
+                .attr("y", 0)
+                .attr("height", 20)
+                .attr("width", (d) => {
+                    if (d == 9) {
+                        return 6;
+                    }
+                    return Math.floor(xScale(d+1)) - Math.floor(xScale(d)) + 1;
+                })
+                .attr("fill", (d) => cScale(d));
+        }
     }
 }
