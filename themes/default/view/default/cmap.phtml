@@ -129,52 +129,8 @@ $path_img_loading = "/themes/default/img/loading.gif";
     Relations: <svg id="seq3" width="80" height="20" ></svg> &nbsp;
 </div>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Carte des entités
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <form action="" method="post" id="frm_sel">
-                        <?php
-                        foreach ($cmap['lst_item_set'] as $id_i_s=>$title) {
-                            ?>
-                            <li><a class="dropdown-item <?= $cmap['sel_carte'] == $id_i_s ? "active" : "" ?>" href="#" onclick="click_lst(<?= $id_i_s ?>)"><?= $title ?></a></li>
-                        <?php
-                        }
-                        ?>
-                            <input type="hidden" name="cartes" id="cartes">
-                        </form>
-                    </ul>
-                </li>
-                <li class="nav-item" id="toImg">
-                    <button class="btn btn-outline-success" onclick="c.toImg()">toImg</button>
-                </li>
-                <li class="nav-item" id="toSvg">
-                    &nbsp;
-                    <button class="btn btn-outline-success" onclick="c.downloadSVG()">toSvg</button>
-                </li>
-            </ul>
-            <?php
-            if (isset($user) && $user->getId() > 0) {
-            ?>
-            <div class="d-flex">
-                <button class="btn btn-outline-success" onclick="c.savePos()" id="but_save_pos">Sauvegarder Position</button>
-                &nbsp;&nbsp;&nbsp;
-                <button class="btn btn-outline-success" onclick="show_add_carte()">Créer un nouvelle carte</button>
-            </div>
-                <?php
-            }
-            ?>
-        </div>
-    </div>
-</nav>
+<?php echo $this->partial('cmap/navMain',['cmap'=>$cmap,'user'=>$user]);?>
+
 
 <div id="wrap" class="scroller_svg" style="display: block">
   <svg id="svg" xmlns="http://www.w3.org/2000/svg" style="border:1px dashed #000;background-color: #F8F8F9;"></svg>
