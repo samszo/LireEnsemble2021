@@ -2,6 +2,7 @@
 $cmap = $this->cmap('');
 $user = $this->identity();
 $path_img_loading = "/themes/default/img/loading.gif";
+$user_id = isset($user) && $user->getId() > 0 ? $user->getId() : 0;
 ?>
 
 <script>
@@ -17,12 +18,7 @@ $path_img_loading = "/themes/default/img/loading.gif";
 
     let site_url = "<?php echo $site->url(); ?>"
 
-    function click_lst(v_carte){
-        document.getElementById("cartes").value = v_carte;
-        document.getElementById('frm_sel').submit();
-        return false;
-    }
-
+    let user_id = "<?php echo $user_id; ?>"
 </script>
 <style>
     /* This only works with JavaScript,
@@ -59,159 +55,56 @@ $path_img_loading = "/themes/default/img/loading.gif";
     .tbClass{
         font-size: 12px;
     }
-
-    button, a.button, .resource-list.preview+a, [type="submit"], .but_cancel {
-        background-color: #BFBFBF;
-        color: #000;
-    }
-    .but_cancel:hover {
-        color: #fff;
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
 </style>
-
-<script>
-    function show_add_carte() {
-        document.getElementById('but_save_pos').style.visibility = 'hidden';
-        $("#navbarSupportedContent li").hide();
-
-        var x = document.getElementById("frm_add_carte");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
-        }
-
-        var y = document.getElementById("wrap");
-        if (y.style.display === "block") {
-            y.style.display = "none";
-        } else {
-            y.style.display = "block";
-        }
-    }
-
-    function checkSelected() {
-        var txt_name = document.getElementById('name_carte');
-        if (txt_name.value === '') {
-            alert('Entrer le nom de la carte');
-            txt_name.focus();
-            return false;
-        } else {
-            var checkboxes = document.getElementsByName("chk_class[]");
-            var numberOfCheckedItems = 0;
-            var str_pos_sel = "";
-            for (var i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].checked) {
-                    numberOfCheckedItems++;
-                    if (str_pos_sel !== "") {
-                        str_pos_sel += ",";
-                    }
-                    str_pos_sel += i;
-                }
-            }
-            document.getElementById("pos_sel").value = str_pos_sel;
-
-            if (numberOfCheckedItems == 0) {
-                alert("Veuillez choisir au moins 1 class");
-                return false;
-            } else {
-                frm_add.submit();
-            }
-        }
-    }
-</script>
-
-<!-- colorimetrique --->
-<div style="text-align: right">
-    Entités: <svg id="seq1" width="80" height="20" ></svg> &nbsp;
-    Propriétés: <svg id="seq2" width="80" height="20" ></svg> &nbsp;
-    Relations: <svg id="seq3" width="80" height="20" ></svg> &nbsp;
-</div>
 
 <?php echo $this->partial('cmap/navMain',['cmap'=>$cmap,'user'=>$user]);?>
 
+<!-- colorimetrique --->
+<div class="container-fluid" style="display: block;padding-top: 20px;padding-left: 0px; padding-right: 0px;" id="colorimetrique">
+    <div class="col col-md-12">
+        <div class="row">
+            <div class="col col-md-2">
+                <b><?= $cmap['name_carte_sel'] ?></b>
+            </div>
+            <div class="col col-md-10" style="text-align: right;">
+                <svg id="seq1"></svg>&nbsp;&nbsp;
+                <svg id="seq2"></svg>&nbsp;&nbsp;
+                <svg id="seq3"></svg>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="wrap" class="scroller_svg" style="display: block">
   <svg id="svg" xmlns="http://www.w3.org/2000/svg" style="border:1px dashed #000;background-color: #F8F8F9;"></svg>
 </div>
 
-<div id="frm_add_carte" style="display: none; padding-top: 10px;">
-    <div style="border:1px dashed #000;background-color: #F8F8F9; padding: 20px;">
-    <form action="" method="post" id="frm_add" onsubmit="return checkSelected();">
-        <div class="form-group row">
-            <label for="inputName" class="col-sm-2 col-form-label">Nom carte <font color="#920b0b">*</font></label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control"  name="name_carte" id="name_carte" placeholder="Nom carte">
-            </div>
-        </div>
-        <fieldset class="form-group">
-            <div class="row">
-                <div class="col-sm-2">Les classes <font color="#920b0b">*</font></div>
-                <div class="col-sm-10">
-                    <div class="row">
-                    <div class="col-sm-4">
-                    <?php
-                    $i = 1;
-                    foreach ($cmap['chk_classes'] as $obj_class) {
-                    ?>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="gridCheck1" name="chk_class[]" class="clonecheckbox" value="<?= $obj_class['label'] ?>">
-                            <label class="form-check-label" for="gridCheck1">
-                                <?= $obj_class['label'] ?>
-                            </label>
-                        </div>
-                        <input type="hidden" name="term_class[]" value="<?= $obj_class['term'] ?>">
-                    <?php
-                        if ($i%3 == 0) {
-                            print '</div><div class="col-sm-4">';
-                        }
-
-                        $i++;
-                    }
-                    ?>
-                        <input type="hidden" name="pos_sel" id="pos_sel" value="">
-                    </div>
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-        <div class="form-group row">
-            <div class="col-sm-10" style="text-align: center;">
-                <button type="submit" class="btn btn-primary">Sauvegarder</button>
-                &nbsp;&nbsp;&nbsp;
-                <a href="<?php echo $site->url(); ?>/page/cmap">
-                    <input type="button" class="btn but_cancel" value="Annuler"/>
-                </a>
-            </div>
-        </div>
-    </form>
-    </div>
-</div>
+<!-- creer cmap -->
+<?php echo $this->partial('cmap/create_cmap',['cmap'=>$cmap,'site'=>$site]);?>
 
 <!-- Modal -->
-<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="postModalLabel">Notification</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-            </div>
-        </div>
-    </div>
-</div>
+<?php echo $this->partial('cmap/modal');?>
 
 <div class="se-pre-con"></div>
 
 <script>
-    var c = new cmap({'width':1400,'height':800,'tables':tables, 'links':links, 'site_url':site_url})
-    c.drawScale("seq1", d3.interpolateRgb('white', 'red'));
-    c.drawScale("seq2", d3.interpolateRgb('white', 'orange'));
-    c.drawScale("seq3", d3.interpolateRgb('brown', 'blue'));
+    var c = new cmap({'width':1400,'height':800,'tables':tables, 'links':links, 'site_url':site_url, 'user_id':user_id})
+
+    legend({
+        id_svg: "seq1",
+        color: d3.scaleSequential([0, tables[0].max_nb_items], d3.interpolate("white", "red")),
+        title: "Entités"
+    })
+
+    legend({
+        id_svg: "seq2",
+        color: d3.scaleSequential([0, tables[0].max_nb_pros], d3.interpolate("white", "orange")),
+        title: "Propriétés"
+    })
+
+    legend({
+        id_svg: "seq3",
+        color: d3.scaleSequential([0, tables[0].max_nb_links], d3.interpolate("brown", "blue")),
+        title: "Relations"
+    })
 </script>

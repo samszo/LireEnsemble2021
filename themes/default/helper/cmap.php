@@ -137,6 +137,7 @@ class cmap extends AbstractHelper
             'links' => $links,
             'lst_item_set' => $lst_item_set,
             'sel_carte' => $params,
+            'name_carte_sel' => $result_carte['title'],
             'chk_classes' => $this->getListClasses(),
             ];
     }

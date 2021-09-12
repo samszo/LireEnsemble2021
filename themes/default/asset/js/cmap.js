@@ -6,6 +6,7 @@ class cmap {
         this.tables = params.tables
         this.links = params.links
         this.site_url = params.site_url
+        this.user_id = params.user_id
         this.arr_pos = []
 
         let svg = d3.select('#svg')
@@ -311,13 +312,13 @@ class cmap {
                     var parsed = JSON.parse(data.success);
                     var str_content = "<table>";
                     $.each(parsed, function (key, val) {
-                        str_content += "<tr><td><a href='" + me.site_url + "/page/inf-item-pro?type=i&mnb=" + me.tables[0].max_nb_items + "&nb=" + parsed.length + "&id=" + val.id + "' target='_blank'>" + val.title + "</a></td></tr>";
+                        str_content += "<tr><td><a href=\"#myModal\" data-toggle=\"modal\" data-id=\""+val.id+"\" class=\"btn-block\">"+val.title+"</a></td></tr>";
                     });
                     str_content += "</table>";
 
                     var str_title = parsed.length + (parsed.length > 1 ? ' items' : ' item') + ' de la classe: ' + d.tableName;
 
-                    me.show_model(str_title, str_content);
+                    me.show_model(str_title, str_content, 1);
                 })
                 .fail(function(e) {
                     //console.log("error = "+JSON.stringify(e))
@@ -437,7 +438,7 @@ class cmap {
 
                     var str_title = parsed.length + (parsed.length > 1 ? ' valeurs' : ' valeur') + ' de propriétés: ' + d.itemName;
 
-                    me.show_model(str_title, str_content);
+                    me.show_model(str_title, str_content, 1);
                 })
                 .fail(function(e) {
                     //console.log("error = "+JSON.stringify(e))
@@ -616,7 +617,6 @@ class cmap {
         }
 
         this.downloadSVG = function downloadSVG(){
-            // console.log()
             let fileName = 'svg';
             let content = document.getElementById('wrap').innerHTML;
             let aTag = document.createElement('a');
@@ -637,15 +637,17 @@ class cmap {
                     'action': 'updatePosition'
                 }
             })
-                .done(function(data) {
+                .done(function (data) {
+                    me.arr_pos = '';
+
                     var str_title = 'Notification';
                     var str_content = "Enregistrer les données avec succès";
 
                     me.show_model(str_title, str_content);
                 })
-                .fail(function(e) {
-                    //console.log("error = "+JSON.stringify(e))
-                    alert("Une erreur s'est produite lors de l'enregistrement")
+                .fail(function (e) {
+                    console.log("error = " + JSON.stringify(e))
+                    //alert("Une erreur s'est produite lors de l'enregistrement")
                 });
         }
 
@@ -653,40 +655,83 @@ class cmap {
             me.arr_pos = arr
         }
 
-        this.show_model = function show_model(title, content) {
-            $('#postModal h5#postModalLabel').text(title);
-            $('#postModal .modal-body').html(content);
+        this.show_model = function show_model(title, content, type=false) {
+            var id_modal = 'postModal';
+            var id_modal_body_list = 'modal-body';
+            if (type == 1) {
+                id_modal = 'postModalTabs';
+                id_modal_body_list = 'modal-body-list';
+            }
 
-            var postModal = new bootstrap.Modal(document.getElementById('postModal'));
+            $('#'+id_modal+' h5#postModalLabel').text(title);
+            $('#'+id_modal+' .'+id_modal_body_list).html(content);
+
+            var postModal = new bootstrap.Modal(document.getElementById(id_modal));
             postModal.show();
         }
 
-        this.drawScale = function drawScale(id, interpolator) {
-            var data = Array.from(Array(10).keys());
+        $(document).ready(function() {
+            $('#postModalTabs').on('shown.bs.modal', function (e) {
+                $('[data-toggle="modal"]').click(function(e) {
+                    e.preventDefault();
 
-            var cScale = d3.scaleSequential()
-                .interpolator(interpolator)
-                .domain([0,9]);
+                    var id = $(this).data('id');
 
-            var xScale = d3.scaleLinear()
-                .domain([0,9])
-                .range([0, 80]);
+                    $.ajax({
+                        type: 'POST',
+                        dataType: 'json',
+                        url: me.site_url + "/page/ajaxPos?json=1",
+                        data: {
+                            'itemSet': id,
+                            'action': 'getTabEntite'
+                        },
+                        beforeSend: function(){
+                            // afficher loading
+                            $(".se-pre-con").show();
+                        }
+                    })
+                    .done(function(data) {
+                        // Cacher loading
+                        $(".se-pre-con").hide();
 
-            var u = d3.select("#" + id)
-                .selectAll("rect")
-                .data(data)
-                .enter()
-                .append("rect")
-                .attr("x", (d) => Math.floor(xScale(d)))
-                .attr("y", 0)
-                .attr("height", 20)
-                .attr("width", (d) => {
-                    if (d == 9) {
-                        return 6;
-                    }
-                    return Math.floor(xScale(d+1)) - Math.floor(xScale(d)) + 1;
-                })
-                .attr("fill", (d) => cScale(d));
+                        $("#view").html(me.tab_view(id));
+                        $("#edit").html(me.tab_edit(id));
+                        $("#modify").html(me.tab_modify(id));
+                    })
+                    .fail(function(e) {
+                        //console.log("error = "+JSON.stringify(e))
+                        alert("Une erreur s'est produite lors de l'enregistrement")
+                    });
+
+                });
+            });
+        });
+
+        this.tab_view = function tab_view(id) {
+            var str_view = '<div class="ratio ratio-16x9">';
+            str_view += '<iframe src="'+me.site_url+'/item/'+id+'" title="" allowfullscreen></iframe>';
+            str_view += '</div>';
+
+            return str_view;
         }
+
+        this.tab_edit = function tab_edit(id) {
+            var str_edit = '';
+            if (me.user_id > 0) {
+                str_edit = '<div class="ratio ratio-16x9">';
+                str_edit += '<iframe src="/admin/item/'+id+'" title="" allowfullscreen></iframe>';
+                str_edit += '</div>';
+            } else {
+                str_edit = '<div style="padding-top: 20px;">';
+                str_edit += 'Vous devez être connecté pour exécuter cette fonction.';
+                str_edit += '</div>';
+            }
+            return str_edit;
+        }
+
+        this.tab_modify = function tab_modify(id) {
+            return id;
+        }
+
     }
 }

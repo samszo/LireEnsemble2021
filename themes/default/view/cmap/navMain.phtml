@@ -1,8 +1,14 @@
 <?php
 $cmap = $this->vars('cmap');
 $user = $this->vars('user');
-
 ?>
+<script>
+    function click_lst(v_carte){
+        document.getElementById("cartes").value = v_carte;
+        document.getElementById('frm_sel').submit();
+        return false;
+    }
+</script>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
