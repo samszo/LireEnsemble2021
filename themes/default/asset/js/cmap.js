@@ -432,7 +432,18 @@ class cmap {
                     var parsed = JSON.parse(data.success);
                     var str_content = "<table>";
                     $.each(parsed, function (key, val) {
-                        str_content += "<tr><td><a href='" + me.site_url + "/page/inf-item-pro?type=p&mnb=" + me.tables[0].max_nb_pros + "&nb=" + parsed.length + "&id=" + val.id + "' target='_blank'>" + val.v_p + "</a></td></tr>";
+                        if (d.id != 1) {
+                            str_content += "<tr><td><a class=\"propriete\" data-bs-toggle=\"collapse\" data-id=\""+val.id+"\" data-title=\""+val.t_i+"\" aria-expanded=\"false\" aria-controls=\"pro"+val.id+"\" href=\"#pro" + val.id + "\" style=\"color: #920b0b;\">" + val.v_p + "</a></td></tr>";
+                            str_content += "<tr><td style='border-bottom:0px;'><div class=\"collapse scroller\" id=\"pro" + val.id + "\">";
+
+                            $.each(val.t_i, function (key1, val1) {
+                                str_content += "<a href=\"#myModal\" data-toggle=\"modal\" data-id=\""+val1.id+"\" class=\"btn-block\" style=\"color: #0d6efd;\"> - "+val1.title+"</a><br/>";
+                            });
+                            
+                            str_content += "</div></td></tr>";
+                        } else {
+                            str_content += "<tr><td><a href=\"#myModal\" data-toggle=\"modal\" data-id=\""+val.id+"\" class=\"btn-block\">"+val.v_p+"</a></td></tr>";
+                        }
                     });
                     str_content += "</table>";
 
@@ -669,14 +680,31 @@ class cmap {
             var postModal = new bootstrap.Modal(document.getElementById(id_modal));
             postModal.show();
         }
+        
+        this.hide_model = function hide_model(id_modal) {
+            setTimeout(function() {
+                $('#'+id_modal).modal('hide');
+            },  5000);
+        }
 
         $(document).ready(function() {
             $('#postModalTabs').on('shown.bs.modal', function (e) {
+                // cliquer propriete
+                $('[data-bs-toggle="collapse"]').click(function(e) {
+                    e.preventDefault();
+                });
+                
+                // cliquer entite
                 $('[data-toggle="modal"]').click(function(e) {
+                    //alert(1);
                     e.preventDefault();
 
                     var id = $(this).data('id');
 
+                    $("#view").html(me.tab_view(id));
+                    $("#edit").html(me.tab_edit(id));
+                    $("#modify").html(me.tab_modify(id));
+/*
                     $.ajax({
                         type: 'POST',
                         dataType: 'json',
@@ -702,13 +730,16 @@ class cmap {
                         //console.log("error = "+JSON.stringify(e))
                         alert("Une erreur s'est produite lors de l'enregistrement")
                     });
-
+*/
+                    //e.stopPropagation();
                 });
+                
+                
             });
         });
 
         this.tab_view = function tab_view(id) {
-            var str_view = '<div class="ratio ratio-16x9">';
+            var str_view = '<div class="ratio ratio-1x1">';
             str_view += '<iframe src="'+me.site_url+'/item/'+id+'" title="" allowfullscreen></iframe>';
             str_view += '</div>';
 
@@ -718,7 +749,7 @@ class cmap {
         this.tab_edit = function tab_edit(id) {
             var str_edit = '';
             if (me.user_id > 0) {
-                str_edit = '<div class="ratio ratio-16x9">';
+                str_edit = '<div class="ratio ratio-1x1">';
                 str_edit += '<iframe src="/admin/item/'+id+'" title="" allowfullscreen></iframe>';
                 str_edit += '</div>';
             } else {
