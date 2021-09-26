@@ -4,6 +4,9 @@
             $("#view").html('');
             $("#edit").html('');
             $("#modify").html('');
+            // masquer le onglet virifier
+            document.getElementById("modify").style.display = 'block';
+            document.getElementById("modify-tab").style.display = 'block';
         });
     });
 </script>
@@ -36,10 +39,10 @@
             <div class="modal-body">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="modal-body-list">...</div>
                         </div>
-                        <div class="col-md-9 ms-auto">
+                        <div class="col-md-10 ms-auto">
                             <div class="modal-body-tabs">
                                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                                     <li class="nav-item" role="presentation">

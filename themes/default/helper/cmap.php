@@ -33,6 +33,8 @@ class cmap extends AbstractHelper
         $this->api = $this->getView()->api();
 
         $_SESSION['pro_value'] = [];
+        
+        $name_entite = isset($_GET['name_entite']) ? $_GET['name_entite'] : '';
 
         // creer new carte
         if (isset($_POST['name_carte'])) {
@@ -40,7 +42,7 @@ class cmap extends AbstractHelper
         }
 
         // prendre liste de cartes: "Collection"
-        $lst_item_set = $this->list_cartes();
+        $lst_item_set = $this->list_cartes($name_entite);
 
         $params = isset($_POST['cartes']) ? $_POST['cartes'] : $this->default_carte; // default carte fin
 
@@ -74,6 +76,8 @@ class cmap extends AbstractHelper
                 $cols = array();
                 $var = array();
                 $i_col = 0;
+                
+                $str_pro = strlen($rt->label()) > 17 ? substr($rt->label(), 0, 17) . "..." : $rt->label();
 
                 foreach ($pros as $pro) {
                     $p = $pro->property();
@@ -90,6 +94,7 @@ class cmap extends AbstractHelper
                         'itemName' => ucfirst($str_title)
                         , 'id' => $p->id()
                         , 'id_rt' => $rt->id()
+                        , 'tableName' => ucfirst($str_pro)
                         , 'links' => $this->getPropertyLinks($p)
                         , 'nbItemPro' => count($arr_v_p)
                     ];
@@ -115,7 +120,7 @@ class cmap extends AbstractHelper
 
                     $i_col++;
                 }
-                $str_pro = strlen($rt->label()) > 17 ? substr($rt->label(), 0, 17) . "..." : $rt->label();
+                
                 $tables[] = [
                     'tableName' => ucfirst($str_pro),
                     'id' => $rt->id(),
@@ -139,6 +144,7 @@ class cmap extends AbstractHelper
             'sel_carte' => $params,
             'name_carte_sel' => $result_carte['title'],
             'chk_classes' => $this->getListClasses(),
+            'name_entite' => $name_entite,
             ];
     }
 
@@ -274,25 +280,76 @@ class cmap extends AbstractHelper
      * @return array
      */
 
-    function list_cartes() {
+    function list_cartes($name_entite = '') {
         $lst_item_set = [];
         $query_items_set = [
             'item_set_id'=>$this->default_collection, // Entite relation
         ];
         $items_set = $this->api->search('items',$query_items_set,['limit'=>0])->getContent();
+        
         if (count($items_set) > 0) {
             foreach ($items_set as $i_s) {
-                // couper nom si long
-                $str_nom = $i_s->title();
-                if (strlen($str_nom) > 30) {
-                    $str_nom = substr($str_nom, 0, 30) . '...';
+                if ( ! empty($name_entite)) {
+                    $result_carte = $this->getCarteInfo1($i_s);
+                
+                    // check exist name of entite
+                    foreach ($result_carte['nodes'] as $arr) {
+                        $pos = strpos($arr['label'], $result_carte['title']);
+                        if ($pos !== false) { // was found
+                            // couper chaine
+                            $str_cut = substr($arr['label'], strlen($result_carte['title'])+1, strlen($arr['label'])); 
+                            if ($str_cut == "$name_entite") {
+                                // couper nom si long
+                                $str_nom = $i_s->title();
+                                if (strlen($str_nom) > 30) {
+                                    $str_nom = substr($str_nom, 0, 30) . '...';
+                                }
+                                $lst_item_set[$i_s->id()] = $str_nom;
+                                $this->default_carte = $i_s->id();
+
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    // couper nom si long
+                    $str_nom = $i_s->title();
+                    if (strlen($str_nom) > 30) {
+                        $str_nom = substr($str_nom, 0, 30) . '...';
+                    }
+                    $lst_item_set[$i_s->id()] = $str_nom;
+                    $this->default_carte = $i_s->id();
                 }
-                $lst_item_set[$i_s->id()] = $str_nom;
-                $this->default_carte = $i_s->id();
             }
             asort($lst_item_set);
         }
         return $lst_item_set;
+    }
+    
+    function getCarteInfo1($oItem){
+        $title = $oItem->value('dcterms:title')->asHtml();
+        $desc = $oItem->value('dcterms:description')->asHtml();
+        $result = [
+            'title'=>$title
+            ,'desc'=>$desc
+        ];
+        $geos = $oItem->value('geom:geometry', ['all' => true]);
+        foreach ($geos as $geo) {
+            $result = $this->getGeoInfo1($geo->valueResource(),$result);
+        }
+
+        return $result;
+    }
+
+    function getGeoInfo1($oItem, $result){
+        $rc = $oItem->displayResourceClassLabel() ;
+        $result['nodes'][] = ['label'=>$oItem->value('dcterms:title')->asHtml()
+            ,'id'=>$oItem->id()
+            ,'x'=>(float)$oItem->value('geom:coordX')->__toString()
+            ,'y'=>(float)$oItem->value('geom:coordY')->__toString()
+        ];
+
+        return $result;
     }
 
 }

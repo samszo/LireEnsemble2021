@@ -312,13 +312,15 @@ class cmap {
                     var parsed = JSON.parse(data.success);
                     var str_content = "<table>";
                     $.each(parsed, function (key, val) {
-                        str_content += "<tr><td><a href=\"#myModal\" data-toggle=\"modal\" data-id=\""+val.id+"\" class=\"btn-block\">"+val.title+"</a></td></tr>";
+                        str_content += "<tr><td><a href=\"#myModal\" data-toggle=\"modal\" data-id=\""+val.id+"\" data-name_entite=\""+d.tableName+"\" class=\"btn-block\">"+val.title+"</a></td></tr>";
                     });
                     str_content += "</table>";
 
                     var str_title = parsed.length + (parsed.length > 1 ? ' items' : ' item') + ' de la classe: ' + d.tableName;
 
                     me.show_model(str_title, str_content, 1);
+                    
+                    $("#modify").html(me.tab_modify(d.tableName));
                 })
                 .fail(function(e) {
                     //console.log("error = "+JSON.stringify(e))
@@ -428,12 +430,17 @@ class cmap {
                 .done(function(data) {
                     // Cacher loading
                     $(".se-pre-con").hide();
-
+                    
                     var parsed = JSON.parse(data.success);
+                    var type_modal = 2;
                     var str_content = "<table>";
                     $.each(parsed, function (key, val) {
-                        if (d.id != 1) {
-                            str_content += "<tr><td><a class=\"propriete\" data-bs-toggle=\"collapse\" data-id=\""+val.id+"\" data-title=\""+val.t_i+"\" aria-expanded=\"false\" aria-controls=\"pro"+val.id+"\" href=\"#pro" + val.id + "\" style=\"color: #920b0b;\">" + val.v_p + "</a></td></tr>";
+                        if ((d.id != 1) && (d.id != 10)) {
+                            var str_value = val.v_p;
+                            if (d.itemName == 'Description') {
+                                str_value = str_value.slice(0, 30) + '...';
+                            }
+                            str_content += "<tr><td><a class=\"propriete\" data-bs-toggle=\"collapse\" data-id=\""+val.id+"\" data-title=\""+val.t_i+"\" aria-expanded=\"false\" aria-controls=\"pro"+val.id+"\" href=\"#pro" + val.id + "\" style=\"color: #920b0b;\">" + str_value + "</a></td></tr>";
                             str_content += "<tr><td style='border-bottom:0px;'><div class=\"collapse scroller\" id=\"pro" + val.id + "\">";
 
                             $.each(val.t_i, function (key1, val1) {
@@ -441,15 +448,26 @@ class cmap {
                             });
                             
                             str_content += "</div></td></tr>";
-                        } else {
-                            str_content += "<tr><td><a href=\"#myModal\" data-toggle=\"modal\" data-id=\""+val.id+"\" class=\"btn-block\">"+val.v_p+"</a></td></tr>";
+                        } else { 
+                            var str_v = val.v_p; // cliquer sur propriete "Title"
+                            var i_id = val.id;
+                            if (d.id == 10) {// cliquer sur propriete "identifier"
+                                $.each(val.t_i, function (key1, val1) {
+                                    str_v = '.' + val1.title;
+                                    i_id = val1.id;
+                                });
+                            } 
+                            str_content += "<tr><td><a href=\"#myModal\" data-toggle=\"modal\" data-id=\""+i_id+"\" class=\"btn-block\">"+str_v+"</a></td></tr>";
+                            type_modal = 1;
+                            
+                            $("#modify").html(me.tab_modify(d.tableName));
                         }
                     });
                     str_content += "</table>";
 
                     var str_title = parsed.length + (parsed.length > 1 ? ' valeurs' : ' valeur') + ' de propriétés: ' + d.itemName;
 
-                    me.show_model(str_title, str_content, 1);
+                    me.show_model(str_title, str_content, type_modal);
                 })
                 .fail(function(e) {
                     //console.log("error = "+JSON.stringify(e))
@@ -657,8 +675,8 @@ class cmap {
                     me.show_model(str_title, str_content);
                 })
                 .fail(function (e) {
-                    console.log("error = " + JSON.stringify(e))
-                    //alert("Une erreur s'est produite lors de l'enregistrement")
+                    //console.log("error = " + JSON.stringify(e))
+                    alert("Une erreur s'est produite lors de l'enregistrement")
                 });
         }
 
@@ -669,7 +687,7 @@ class cmap {
         this.show_model = function show_model(title, content, type=false) {
             var id_modal = 'postModal';
             var id_modal_body_list = 'modal-body';
-            if (type == 1) {
+            if ((type == 1) || (type == 2)) {
                 id_modal = 'postModalTabs';
                 id_modal_body_list = 'modal-body-list';
             }
@@ -679,6 +697,15 @@ class cmap {
 
             var postModal = new bootstrap.Modal(document.getElementById(id_modal));
             postModal.show();
+            
+            if (type == 2) { // proprietes
+                // masquer le onglet verifier
+                document.getElementById("modify").style.display = 'none';
+                document.getElementById("modify-tab").style.display = 'none';
+                
+                $('#view-tab').tab('show'); // l'onglet VOIR est selectionne
+            }
+            
         }
         
         this.hide_model = function hide_model(id_modal) {
@@ -696,42 +723,13 @@ class cmap {
                 
                 // cliquer entite
                 $('[data-toggle="modal"]').click(function(e) {
-                    //alert(1);
                     e.preventDefault();
 
                     var id = $(this).data('id');
+                    var name_entite = $(this).data('name_entite');
 
                     $("#view").html(me.tab_view(id));
                     $("#edit").html(me.tab_edit(id));
-                    $("#modify").html(me.tab_modify(id));
-/*
-                    $.ajax({
-                        type: 'POST',
-                        dataType: 'json',
-                        url: me.site_url + "/page/ajaxPos?json=1",
-                        data: {
-                            'itemSet': id,
-                            'action': 'getTabEntite'
-                        },
-                        beforeSend: function(){
-                            // afficher loading
-                            $(".se-pre-con").show();
-                        }
-                    })
-                    .done(function(data) {
-                        // Cacher loading
-                        $(".se-pre-con").hide();
-
-                        $("#view").html(me.tab_view(id));
-                        $("#edit").html(me.tab_edit(id));
-                        $("#modify").html(me.tab_modify(id));
-                    })
-                    .fail(function(e) {
-                        //console.log("error = "+JSON.stringify(e))
-                        alert("Une erreur s'est produite lors de l'enregistrement")
-                    });
-*/
-                    //e.stopPropagation();
                 });
                 
                 
@@ -760,8 +758,12 @@ class cmap {
             return str_edit;
         }
 
-        this.tab_modify = function tab_modify(id) {
-            return id;
+        this.tab_modify = function tab_modify(name_entite) {
+            var str_view = '<div class="ratio ratio-1x1">';
+            str_view += '<iframe src="'+me.site_url+'/page/cmap?name_entite='+name_entite+'" title="" allowfullscreen></iframe>';
+            str_view += '</div>';
+
+            return str_view;
         }
 
     }

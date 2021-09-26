@@ -84,7 +84,7 @@ $user_id = isset($user) && $user->getId() > 0 ? $user->getId() : 0;
             <div class="col col-md-10" style="text-align: right;">
                 <svg id="seq1"></svg>&nbsp;&nbsp;
                 <svg id="seq2"></svg>&nbsp;&nbsp;
-                <svg id="seq3"></svg>
+                <svg id="seq3"></svg>&nbsp;&nbsp;
             </div>
         </div>
     </div>
@@ -95,7 +95,11 @@ $user_id = isset($user) && $user->getId() > 0 ? $user->getId() : 0;
 </div>
 
 <!-- creer cmap -->
-<?php echo $this->partial('cmap/create_cmap',['cmap'=>$cmap,'site'=>$site]);?>
+<?php 
+if ($cmap['name_entite'] == '') {
+    echo $this->partial('cmap/create_cmap',['cmap'=>$cmap,'site'=>$site]);
+}
+?>
 
 <!-- Modal -->
 <?php echo $this->partial('cmap/modal');?>

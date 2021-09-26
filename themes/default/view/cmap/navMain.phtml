@@ -9,6 +9,55 @@ $user = $this->vars('user');
         return false;
     }
 </script>
+<style>
+    @media (min-width:375px) {
+        .navbar-expand-lg {
+          -webkit-box-orient: horizontal;
+          -webkit-box-direction: normal;
+          -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+          -webkit-box-pack: start;
+          -ms-flex-pack: start;
+          justify-content: flex-start;
+        }
+        .navbar-expand-lg .navbar-nav {
+          -webkit-box-orient: horizontal;
+          -webkit-box-direction: normal;
+          -ms-flex-direction: row;
+          flex-direction: row;
+        }
+        .navbar-expand-lg .navbar-nav .dropdown-menu {
+          position: absolute;
+        }
+        .navbar-expand-lg .navbar-nav .dropdown-menu-right {
+          right: 0;
+          left: auto;
+        }
+        .navbar-expand-lg .navbar-nav .nav-link {
+          padding-right: 0.5rem;
+          padding-left: 0.5rem;
+        }
+        .navbar-expand-lg > .container,
+        .navbar-expand-lg > .container-fluid {
+          -ms-flex-wrap: nowrap;
+          flex-wrap: nowrap;
+        }
+        .navbar-expand-lg .navbar-collapse {
+          display: -webkit-box !important;
+          display: -ms-flexbox !important;
+          display: flex !important;
+          -ms-flex-preferred-size: auto;
+          flex-basis: auto;
+        }
+        .navbar-expand-lg .navbar-toggler {
+          display: none;
+        }
+        .navbar-expand-lg .dropup .dropdown-menu {
+          top: auto;
+          bottom: 100%;
+        }
+      }
+</style>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,10 +95,16 @@ $user = $this->vars('user');
             ?>
             <div class="d-flex">
                 <button class="btn btn-outline-success" onclick="c.savePos()" id="but_save_pos">Sauvegarder Position</button>
-                &nbsp;&nbsp;&nbsp;
-                <button class="btn btn-outline-success" onclick="show_add_carte()">Créer un nouvelle carte</button>
-            </div>
                 <?php
+                if ($cmap['name_entite'] == '') {
+                ?>
+                    &nbsp;&nbsp;&nbsp;
+                    <button class="btn btn-outline-success" onclick="show_add_carte()">Créer un nouvelle carte</button>
+                <?php
+                }
+                ?>
+            </div>
+            <?php
             }
             ?>
         </div>
